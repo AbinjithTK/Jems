@@ -176,6 +176,11 @@ resource "google_cloud_run_v2_service" "backend" {
       }
 
       env {
+        name  = "DEMO_MODE_ENABLED"
+        value = "true"
+      }
+
+      env {
         name = "SCHEDULER_SECRET"
         value_source {
           secret_key_ref {

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../providers/demo_mode_provider.dart';
 import 'api_client.dart';
 import 'auth_service.dart';
 
@@ -42,6 +43,10 @@ class WsChatEvent {
 class WsChatService extends ChangeNotifier {
   final String _wsBaseUrl;
   final AuthService? _auth;
+
+  /// When true, appends &demo=true instead of &token=<firebase_token>.
+  bool _demoMode = false;
+  set demoMode(bool v) => _demoMode = v;
 
   WebSocketChannel? _channel;
   StreamSubscription? _wsSub;
@@ -95,10 +100,14 @@ class WsChatService extends ChangeNotifier {
       _sessionId = const Uuid().v4();
       var wsUrl = '$_wsBaseUrl/api/ws/chat/$userId/$_sessionId?agent=$agentName';
 
-      // Always fetch a fresh Firebase ID token at connect time
-      final token = _auth != null ? await _auth.getIdToken() : null;
-      if (token != null) {
-        wsUrl += '&token=$token';
+      if (_demoMode) {
+        wsUrl += '&demo=true';
+      } else {
+        // Always fetch a fresh Firebase ID token at connect time
+        final token = _auth != null ? await _auth.getIdToken() : null;
+        if (token != null) {
+          wsUrl += '&token=$token';
+        }
       }
 
       _channel = WebSocketChannel.connect(Uri.parse(wsUrl));
@@ -242,8 +251,12 @@ class WsChatService extends ChangeNotifier {
 }
 
 /// Provider for the WebSocket chat service.
+/// In demo mode, sends &demo=true instead of Firebase token.
 final wsChatServiceProvider = ChangeNotifierProvider<WsChatService>((ref) {
   final apiClient = ref.watch(apiClientProvider);
   final auth = ref.watch(authServiceProvider);
-  return WsChatService(wsBaseUrl: apiClient.wsBaseUrl, auth: auth);
+  final isDemoMode = ref.watch(demoModeProvider);
+  final svc = WsChatService(wsBaseUrl: apiClient.wsBaseUrl, auth: auth);
+  svc.demoMode = isDemoMode;
+  return svc;
 });

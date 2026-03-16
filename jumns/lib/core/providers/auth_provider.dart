@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/user_settings.dart';
 import '../services/api_client.dart';
 import '../services/auth_service.dart';
+import 'demo_mode_provider.dart';
+
+export 'demo_mode_provider.dart' show demoModeProvider;
 
 /// Manages Firebase auth state for the entire app.
 class AuthNotifier extends StateNotifier<AuthState> {
@@ -163,9 +166,6 @@ final authNotifierProvider =
   );
 });
 
-/// Demo mode — bypasses Firebase auth for instant MVP testing.
-final demoModeProvider = StateProvider<bool>((ref) => false);
-
 // --- Server-side data providers (use JWT-authenticated API) ---
 
 /// Settings provider that works in BOTH demo and auth modes.
@@ -191,7 +191,14 @@ final userSettingsProvider = FutureProvider<UserSettings?>((ref) async {
 });
 
 final subscriptionStatusProvider = FutureProvider<SubscriptionStatus>((ref) async {
+  final isDemoMode = ref.watch(demoModeProvider);
   final authState = ref.watch(authNotifierProvider);
+
+  // Demo mode → unlimited access, no API call needed
+  if (isDemoMode) {
+    return const SubscriptionStatus(isActive: true, plan: 'demo_pro');
+  }
+
   // Don't fire API calls while auth is still initializing
   if (authState.status != AuthStatus.authenticated) {
     return const SubscriptionStatus();
@@ -206,6 +213,9 @@ final subscriptionStatusProvider = FutureProvider<SubscriptionStatus>((ref) asyn
 });
 
 final accessCodeStatusProvider = FutureProvider<bool>((ref) async {
+  final isDemoMode = ref.watch(demoModeProvider);
+  if (isDemoMode) return true; // Demo mode → always activated
+
   final authState = ref.watch(authNotifierProvider);
   // Don't fire API calls while auth is still initializing
   if (authState.status != AuthStatus.authenticated) return false;

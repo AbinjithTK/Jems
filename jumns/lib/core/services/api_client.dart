@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/demo_mode_provider.dart';
 import 'auth_service.dart';
 
 /// Central API client for the Jems backend.
@@ -33,6 +34,10 @@ class ApiClient {
   final http.Client _http;
   final AuthService? _auth;
 
+  /// When true, sends X-Demo-Mode header instead of Firebase token.
+  bool _demoMode = false;
+  set demoMode(bool v) => _demoMode = v;
+
   ApiClient({AuthService? auth, http.Client? client})
       : _auth = auth,
         _http = client ?? http.Client();
@@ -52,6 +57,12 @@ class ApiClient {
   }
 
   Future<Map<String, String>> get _headers async {
+    if (_demoMode) {
+      return {
+        'Content-Type': 'application/json',
+        'X-Demo-Mode': 'true',
+      };
+    }
     final token = _auth != null ? await _auth.getIdToken() : null;
     return {
       'Content-Type': 'application/json',
@@ -175,9 +186,11 @@ class ApiException implements Exception {
 }
 
 /// Creates ApiClient with AuthService for Firebase ID tokens.
-/// In demo/local mode the auth service still exists but tokens will be null,
-/// which is fine — the local server ignores Authorization headers.
+/// In demo mode, sends X-Demo-Mode header instead of Bearer token.
 final apiClientProvider = Provider<ApiClient>((ref) {
   final auth = ref.watch(authServiceProvider);
-  return ApiClient(auth: auth);
+  final isDemoMode = ref.watch(demoModeProvider);
+  final client = ApiClient(auth: auth);
+  client.demoMode = isDemoMode;
+  return client;
 });
