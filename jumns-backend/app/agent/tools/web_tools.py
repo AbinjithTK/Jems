@@ -2,17 +2,26 @@
 
 Mirrors the Projectj web_search tool: uses Gemini's built-in Google Search
 to provide real-time information for goal planning, tips, and research.
+
+Uses Vertex AI with Application Default Credentials (ADC) on Cloud Run.
 """
 
 from __future__ import annotations
 
 import os
 
-from strands import tool
+
+def _get_vertex_access_token() -> str:
+    """Get an access token from ADC for Vertex AI REST calls."""
+    import google.auth
+    import google.auth.transport.requests
+
+    credentials, _ = google.auth.default()
+    credentials.refresh(google.auth.transport.requests.Request())
+    return credentials.token
 
 
-@tool
-def web_search(query: str, context: str = "") -> dict:
+def web_search(query: str, context: str) -> dict:
     """Search the internet for real-time information using Google Search.
 
     Use when the user asks about current events, needs tips/advice,
@@ -26,14 +35,15 @@ def web_search(query: str, context: str = "") -> dict:
 
     Args:
         query: The search query to look up.
-        context: Why you're searching — helps refine results.
+        context: Why you're searching — helps refine results. Use empty string if none.
 
     Returns:
         Dict with answer text and source URLs.
     """
-    api_key = os.getenv("GEMINI_API_KEY", "")
-    if not api_key:
-        return {"error": "Web search not configured", "query": query}
+    project = os.getenv("GOOGLE_CLOUD_PROJECT", "")
+    location = os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
+    if not project:
+        return {"error": "Web search not configured — GOOGLE_CLOUD_PROJECT not set", "query": query}
 
     try:
         import httpx
@@ -48,10 +58,16 @@ def web_search(query: str, context: str = "") -> dict:
             "tips, or data points. Include source references when possible."
         )
 
+        token = _get_vertex_access_token()
+        url = (
+            f"https://{location}-aiplatform.googleapis.com/v1beta1/projects/"
+            f"{project}/locations/{location}/publishers/google/models/"
+            "gemini-2.5-flash:generateContent"
+        )
+
         resp = httpx.post(
-            "https://generativelanguage.googleapis.com/v1beta/models/"
-            "gemini-2.5-flash:generateContent",
-            params={"key": api_key},
+            url,
+            headers={"Authorization": f"Bearer {token}"},
             json={
                 "contents": [{"parts": [{"text": prompt}]}],
                 "tools": [{"google_search": {}}],

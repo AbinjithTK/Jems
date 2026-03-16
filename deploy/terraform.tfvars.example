@@ -1,0 +1,16 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# NEVER commit terraform.tfvars — it may contain sensitive data.
+
+project_id = "my-gcp-project-id"
+region     = "us-central1"
+stage      = "dev"
+image_tag  = "dev-abc1234"
+
+# Pass sensitive keys via environment variables:
+#   export TF_VAR_scheduler_secret="your-scheduler-shared-secret"
+#
+# Gemini access uses Vertex AI with Application Default Credentials (ADC).
+# No API key needed — the Cloud Run service account gets roles/aiplatform.user.
+
+# GCS bucket CORS origins — restrict in production to your Cloud Run URL
+# allowed_cors_origins = ["https://jumns-backend-dev-xxxxx-uc.a.run.app"]

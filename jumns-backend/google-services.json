@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "223041105296",
+    "project_id": "jems-dd018",
+    "storage_bucket": "jems-dd018.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223041105296:android:8b34462f537f97d2d41715",
+        "android_client_info": {
+          "package_name": "com.jems.assistant"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223041105296-dahk5srvrkihfrmj42astc5p3ms7fnro.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCZriNbozQI2hl47Vg28sOsayvX-m0OsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223041105296-dahk5srvrkihfrmj42astc5p3ms7fnro.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

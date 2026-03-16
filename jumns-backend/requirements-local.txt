@@ -1,0 +1,20 @@
+# Jumns Backend — Local Development Dependencies
+# Use this instead of requirements.txt for local dev:
+#   pip install -r requirements-local.txt
+#
+# Uses Firestore emulator (no real GCP credentials needed).
+# Install gcloud CLI and run:
+#   gcloud emulators firestore start --host-port=localhost:8080
+
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+google-cloud-firestore>=2.19.0
+google-cloud-storage>=2.18.0
+google-auth>=2.29.0
+google-adk>=1.0.0
+google-genai>=1.0.0
+mcp>=1.0.0
+httpx>=0.27.0
+pydantic>=2.10.0
+numpy>=1.26.0
+websockets>=13.0.0

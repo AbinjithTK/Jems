@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.jumns" "\0"
-            VALUE "FileDescription", "jumns" "\0"
+            VALUE "CompanyName", "com.jems" "\0"
+            VALUE "FileDescription", "jems" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "jumns" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.jumns. All rights reserved." "\0"
-            VALUE "OriginalFilename", "jumns.exe" "\0"
-            VALUE "ProductName", "jumns" "\0"
+            VALUE "InternalName", "jems" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 com.jems. All rights reserved." "\0"
+            VALUE "OriginalFilename", "jems.exe" "\0"
+            VALUE "ProductName", "jems" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

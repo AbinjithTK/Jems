@@ -24,7 +24,7 @@ class GeminiService {
   GeminiService({http.Client? client}) : _http = client ?? http.Client();
 
   static const String _systemPrompt = '''
-You are Jumns, a warm and encouraging AI life assistant. You help users with:
+You are Jems, a warm and encouraging AI life assistant. You help users with:
 - Setting and tracking personal goals
 - Managing daily tasks and reminders
 - Health and wellness check-ins

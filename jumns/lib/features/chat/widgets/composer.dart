@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 
 /// Charcoal Sketch composer: wobbly input border, blob add button,
 /// charcoal send button with blob shape.
@@ -63,7 +63,7 @@ class _ComposerState extends State<Composer> {
   Future<void> _pickImage() async {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: JumnsColors.paper,
+      backgroundColor: JemsColors.paper,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -75,20 +75,20 @@ class _ComposerState extends State<Composer> {
             children: [
               ListTile(
                 leading: const Icon(Icons.camera_alt_rounded,
-                    color: JumnsColors.charcoal),
+                    color: JemsColors.charcoal),
                 title: Text('Camera',
                     style: GoogleFonts.architectsDaughter(
                         fontWeight: FontWeight.w700,
-                        color: JumnsColors.charcoal)),
+                        color: JemsColors.charcoal)),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library_rounded,
-                    color: JumnsColors.charcoal),
+                    color: JemsColors.charcoal),
                 title: Text('Gallery',
                     style: GoogleFonts.architectsDaughter(
                         fontWeight: FontWeight.w700,
-                        color: JumnsColors.charcoal)),
+                        color: JemsColors.charcoal)),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
             ],
@@ -119,10 +119,10 @@ class _ComposerState extends State<Composer> {
         bottom: MediaQuery.of(context).padding.bottom + 12,
       ),
       decoration: BoxDecoration(
-        color: JumnsColors.paper.withAlpha(240),
+        color: JemsColors.paper.withAlpha(240),
         border: const Border(
           top: BorderSide(
-            color: JumnsColors.ink,
+            color: JemsColors.ink,
             width: 2,
             style: BorderStyle.solid,
           ),
@@ -133,8 +133,8 @@ class _ComposerState extends State<Composer> {
         child: Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: JumnsColors.surface,
-            border: Border.all(color: JumnsColors.ink, width: 2),
+            color: JemsColors.surface,
+            border: Border.all(color: JemsColors.ink, width: 2),
             borderRadius: const BorderRadius.only(
               topLeft: Radius.elliptical(20, 48),
               topRight: Radius.elliptical(48, 6),
@@ -173,13 +173,13 @@ class _ComposerState extends State<Composer> {
                             style: GoogleFonts.architectsDaughter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: JumnsColors.ink.withAlpha(150))),
+                                color: JemsColors.ink.withAlpha(150))),
                       ),
                       GestureDetector(
                         onTap: () =>
                             setState(() => _attachedImage = null),
                         child: const Icon(Icons.close_rounded,
-                            size: 20, color: JumnsColors.ink),
+                            size: 20, color: JemsColors.ink),
                       ),
                     ],
                   ),
@@ -193,21 +193,21 @@ class _ComposerState extends State<Composer> {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: JumnsColors.lavender.withAlpha(80),
+                    color: JemsColors.lavender.withAlpha(80),
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.elliptical(64, 55),
                       topRight: Radius.elliptical(36, 58),
                       bottomLeft: Radius.elliptical(27, 42),
                       bottomRight: Radius.elliptical(73, 45),
                     ),
-                    border: Border.all(color: JumnsColors.ink, width: 2),
+                    border: Border.all(color: JemsColors.ink, width: 2),
                   ),
                   child: Icon(
                     Icons.add_rounded,
                     size: 20,
                     color: widget.isDisabled
-                        ? JumnsColors.ink.withAlpha(80)
-                        : JumnsColors.charcoal,
+                        ? JemsColors.ink.withAlpha(80)
+                        : JemsColors.charcoal,
                   ),
                 ),
               ),
@@ -218,7 +218,7 @@ class _ComposerState extends State<Composer> {
                   controller: _controller,
                   enabled: !widget.isDisabled,
                   style: GoogleFonts.architectsDaughter(
-                    color: JumnsColors.charcoal,
+                    color: JemsColors.charcoal,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
@@ -236,7 +236,7 @@ class _ComposerState extends State<Composer> {
                     ),
                     isDense: true,
                     hintStyle: GoogleFonts.architectsDaughter(
-                      color: JumnsColors.ink.withAlpha(100),
+                      color: JemsColors.ink.withAlpha(100),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -256,7 +256,7 @@ class _ComposerState extends State<Composer> {
                     height: 38,
                     child: Icon(
                       Icons.mic_rounded,
-                      color: JumnsColors.charcoal,
+                      color: JemsColors.charcoal,
                       size: 22,
                     ),
                   ),
@@ -278,7 +278,7 @@ class _ComposerState extends State<Composer> {
                   height: 40,
                   decoration: BoxDecoration(
                     color: (_hasText || _attachedImage != null)
-                        ? JumnsColors.charcoal
+                        ? JemsColors.charcoal
                         : Colors.transparent,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.elliptical(64, 55),
@@ -296,8 +296,8 @@ class _ComposerState extends State<Composer> {
                           ? Icons.send_rounded
                           : Icons.edit_rounded,
                       color: (_hasText || _attachedImage != null)
-                          ? JumnsColors.paper
-                          : JumnsColors.charcoal,
+                          ? JemsColors.paper
+                          : JemsColors.charcoal,
                       size: 18,
                     ),
                   ),

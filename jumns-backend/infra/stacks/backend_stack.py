@@ -28,7 +28,7 @@ class JumnsBackendStack(cdk.Stack):
     ) -> None:
         super().__init__(scope, id, **kwargs)
 
-        # 1. Database — 8 DynamoDB tables
+        # 1. Database — 12 DynamoDB tables
         db = DatabaseConstruct(self, "Database", stage=stage)
 
         # 2. Memory Store — S3 bucket for vector memory JSON files
@@ -38,7 +38,7 @@ class JumnsBackendStack(cdk.Stack):
         secrets = sm.Secret(
             self, "ApiKeys",
             secret_name=f"jumns-api-keys-{stage}",
-            description="Gemini, failover model, and RevenueCat API keys",
+            description="Gemini and failover model API keys",
         )
 
         # 4. API Gateway + Lambda functions

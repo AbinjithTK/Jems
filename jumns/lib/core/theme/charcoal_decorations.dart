@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'jumns_colors.dart';
+import 'jems_colors.dart';
 
 // ─── Wobbly border radii (mimics hand-drawn CSS border-radius) ───
 
@@ -29,10 +29,10 @@ BoxDecoration charcoalBorderDecoration({
   return BoxDecoration(
     color: fill,
     borderRadius: kCharcoalRadius,
-    border: Border.all(color: JumnsColors.ink, width: borderWidth),
+    border: Border.all(color: JemsColors.ink, width: borderWidth),
     boxShadow: const [
       BoxShadow(
-        color: JumnsColors.borderShadow,
+        color: JemsColors.borderShadow,
         offset: Offset(2, 3),
         blurRadius: 0,
       ),
@@ -82,7 +82,7 @@ class CharcoalCard extends StatelessWidget {
                         bottomRight: Radius.elliptical(73, 45),
                       ),
                       border: Border.all(
-                        color: JumnsColors.ink,
+                        color: JemsColors.ink,
                         width: 2,
                         style: BorderStyle.none,
                       ),
@@ -157,7 +157,7 @@ class BlobShape extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: _radius,
-        border: Border.all(color: JumnsColors.ink, width: 2),
+        border: Border.all(color: JemsColors.ink, width: 2),
       ),
       child: Center(child: child),
     );
@@ -185,8 +185,8 @@ class HandDrawnCheckbox extends StatelessWidget {
         height: 24,
         decoration: BoxDecoration(
           borderRadius: kCharcoalRadius,
-          border: Border.all(color: JumnsColors.ink, width: 2),
-          color: checked ? JumnsColors.charcoal : Colors.transparent,
+          border: Border.all(color: JemsColors.ink, width: 2),
+          color: checked ? JemsColors.charcoal : Colors.transparent,
         ),
         child: checked
             ? CustomPaint(
@@ -203,7 +203,7 @@ class _CheckPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = JumnsColors.paper
+      ..color = JemsColors.paper
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round;
@@ -271,7 +271,7 @@ class DashedSeparator extends StatelessWidget {
 
   const DashedSeparator({
     super.key,
-    this.color = JumnsColors.ink,
+    this.color = JemsColors.ink,
     this.height = 2,
   });
 
@@ -341,7 +341,7 @@ class CharcoalSectionHeader extends StatelessWidget {
               style: GoogleFonts.gloriaHallelujah(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
-                color: JumnsColors.charcoal,
+                color: JemsColors.charcoal,
               ),
             ),
             if (trailing != null)
@@ -350,7 +350,7 @@ class CharcoalSectionHeader extends StatelessWidget {
                 style: GoogleFonts.architectsDaughter(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: JumnsColors.ink.withAlpha(130),
+                  color: JemsColors.ink.withAlpha(130),
                 ),
               ),
           ],
@@ -370,7 +370,7 @@ class CharcoalProgressBar extends StatelessWidget {
   const CharcoalProgressBar({
     super.key,
     required this.progress,
-    this.fillColor = JumnsColors.mint,
+    this.fillColor = JemsColors.mint,
     this.height = 14,
   });
 
@@ -379,9 +379,9 @@ class CharcoalProgressBar extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        color: JumnsColors.surface,
+        color: JemsColors.surface,
         borderRadius: BorderRadius.circular(height / 2),
-        border: Border.all(color: JumnsColors.ink, width: 2),
+        border: Border.all(color: JemsColors.ink, width: 2),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(height / 2),
@@ -392,7 +392,7 @@ class CharcoalProgressBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: fillColor,
               border: Border(
-                right: BorderSide(color: JumnsColors.ink, width: 2),
+                right: BorderSide(color: JemsColors.ink, width: 2),
               ),
             ),
           ),

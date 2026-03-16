@@ -8,7 +8,8 @@ import '../../core/providers/goals_provider.dart';
 import '../../core/providers/tasks_provider.dart';
 import '../../core/providers/reminders_provider.dart';
 import '../../core/providers/auth_provider.dart';
-import '../../core/theme/jumns_colors.dart';
+import '../../core/providers/settings_provider.dart';
+import '../../core/theme/jems_colors.dart';
 import 'widgets/agent_header.dart';
 import 'widgets/composer.dart';
 import 'widgets/message_bubble.dart';
@@ -35,8 +36,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final messagesAsync = ref.watch(messagesNotifierProvider);
     final isLoading = ref.watch(isChatLoadingProvider);
-    final settingsAsync = ref.watch(userSettingsProvider);
-    final agentName = settingsAsync.valueOrNull?.agentName ?? 'Jumns';
+    final settingsAsync = ref.watch(userSettingsNotifierProvider);
+    final agentName = settingsAsync.valueOrNull?.agentName ?? 'Jems';
 
     return Column(
       children: [
@@ -52,11 +53,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.cloud_off, size: 48,
-                      color: JumnsColors.ink.withAlpha(120)),
+                      color: JemsColors.ink.withAlpha(120)),
                   const SizedBox(height: 12),
                   Text('Could not connect to server',
                       style: GoogleFonts.architectsDaughter(
-                        color: JumnsColors.ink.withAlpha(150),
+                        color: JemsColors.ink.withAlpha(150),
                       )),
                   const SizedBox(height: 8),
                   TextButton(
@@ -121,11 +122,11 @@ class _EmptyChat extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.chat_bubble_outline, size: 48,
-              color: JumnsColors.ink.withAlpha(100)),
+              color: JemsColors.ink.withAlpha(100)),
           const SizedBox(height: 16),
           Text('Start a conversation',
               style: GoogleFonts.architectsDaughter(
-                color: JumnsColors.ink.withAlpha(150),
+                color: JemsColors.ink.withAlpha(150),
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
               )),
@@ -155,11 +156,11 @@ class _ChatList extends StatelessWidget {
                 SizedBox(width: 16, height: 16,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: JumnsColors.charcoal,
+                      color: JemsColors.charcoal,
                     )),
                 SizedBox(width: 8),
                 Text('Sketching...',
-                    style: TextStyle(color: JumnsColors.ink,
+                    style: TextStyle(color: JemsColors.ink,
                         fontSize: 13)),
               ],
             ),
@@ -175,9 +176,9 @@ class _ChatList extends StatelessWidget {
           widgets.add(Padding(
             padding: const EdgeInsets.only(bottom: 4, top: 8),
             child: Text(
-              'JUMNS ${msg.timestamp}',
+              'JEMS ${msg.timestamp}',
               style: GoogleFonts.architectsDaughter(
-                color: JumnsColors.ink.withAlpha(150),
+                color: JemsColors.ink.withAlpha(150),
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,

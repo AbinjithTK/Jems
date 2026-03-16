@@ -5,17 +5,29 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'auth_service.dart';
 
-/// Central API client for the Jumns backend.
+/// Central API client for the Jems backend.
 ///
-/// In demo mode (local dev), points at the local FastAPI server.
-/// In production, uses Cognito JWT Bearer tokens for authentication.
+/// Split architecture:
+///   API_BASE_URL  → Cloud Run (CRUD, data endpoints)
+///   CHAT_BASE_URL → Cloud Run (ADK agents, WebSocket, voice)
 ///
-/// Set the backend URL at build time:
-///   flutter run --dart-define=API_BASE_URL=https://your-api-gateway-url.amazonaws.com/prod
+/// Auth: Firebase ID tokens sent as Bearer tokens.
+///
+/// Set at build time:
+///   flutter run \
+///     --dart-define=API_BASE_URL=https://jems-api-xxx.run.app \
+///     --dart-define=CHAT_BASE_URL=https://jems-agent-xxx.run.app
 class ApiClient {
   static const String _baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000',
+    defaultValue: 'https://jumns-backend-dev-ypwmnkarcq-uc.a.run.app',
+  );
+
+  /// Separate URL for agent/chat/WebSocket endpoints (Cloud Run).
+  /// Falls back to _baseUrl if not set (local dev uses same server).
+  static const String _chatBaseUrl = String.fromEnvironment(
+    'CHAT_BASE_URL',
+    defaultValue: '',
   );
 
   final http.Client _http;
@@ -26,6 +38,18 @@ class ApiClient {
         _http = client ?? http.Client();
 
   String get baseUrl => _baseUrl;
+
+  /// The base URL for chat/agent endpoints. Falls back to baseUrl in local dev.
+  String get chatBaseUrl => _chatBaseUrl.isNotEmpty ? _chatBaseUrl : _baseUrl;
+
+  /// WebSocket URL for bidi-streaming chat.
+  /// Converts https:// to wss:// or http:// to ws://.
+  String get wsBaseUrl {
+    final base = chatBaseUrl;
+    if (base.startsWith('https://')) return base.replaceFirst('https://', 'wss://');
+    if (base.startsWith('http://')) return base.replaceFirst('http://', 'ws://');
+    return base;
+  }
 
   Future<Map<String, String>> get _headers async {
     final token = _auth != null ? await _auth.getIdToken() : null;
@@ -45,12 +69,21 @@ class ApiClient {
     });
   }
 
-  Future<dynamic> post(String path, {Object? body}) async {
+  Future<dynamic> post(String path, {Object? body, Duration? timeout}) async {
     return _withRetry(() async {
       final uri = Uri.parse('$_baseUrl$path');
       final res = await _http.post(uri, headers: await _headers, body: jsonEncode(body));
       return _handleResponse(res);
-    });
+    }, timeout: timeout);
+  }
+
+  /// POST to the chat/agent service (Cloud Run in production, same server locally).
+  Future<dynamic> chatPost(String path, {Object? body, Duration? timeout}) async {
+    return _withRetry(() async {
+      final uri = Uri.parse('$chatBaseUrl$path');
+      final res = await _http.post(uri, headers: await _headers, body: jsonEncode(body));
+      return _handleResponse(res);
+    }, timeout: timeout ?? const Duration(seconds: 120));
   }
 
   Future<dynamic> patch(String path, {Object? body}) async {
@@ -92,10 +125,22 @@ class ApiClient {
   }
 
   /// Retry up to 2 times on network errors (SocketException, timeout).
-  Future<T> _withRetry<T>(Future<T> Function() fn, {int retries = 2}) async {
+  /// Also handles 401 by force-refreshing the Firebase token and retrying once.
+  Future<T> _withRetry<T>(Future<T> Function() fn, {int retries = 2, Duration? timeout}) async {
+    final effectiveTimeout = timeout ?? const Duration(seconds: 15);
+    bool hasRetried401 = false;
+
     for (var attempt = 0; attempt <= retries; attempt++) {
       try {
-        return await fn().timeout(const Duration(seconds: 15));
+        return await fn().timeout(effectiveTimeout);
+      } on ApiException catch (e) {
+        // On 401, force-refresh the Firebase token and retry once
+        if (e.statusCode == 401 && !hasRetried401 && _auth != null) {
+          hasRetried401 = true;
+          await _auth.forceRefreshToken();
+          continue;
+        }
+        rethrow;
       } on SocketException {
         if (attempt == retries) {
           throw ApiException(0, 'No internet connection. Check your network and try again.');
@@ -129,7 +174,7 @@ class ApiException implements Exception {
   String toString() => 'ApiException($statusCode): $body';
 }
 
-/// Creates ApiClient with AuthService for Cognito JWT tokens.
+/// Creates ApiClient with AuthService for Firebase ID tokens.
 /// In demo/local mode the auth service still exists but tokens will be null,
 /// which is fine — the local server ignores Authorization headers.
 final apiClientProvider = Provider<ApiClient>((ref) {

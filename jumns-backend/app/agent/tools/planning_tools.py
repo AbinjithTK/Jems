@@ -14,21 +14,20 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 
-from strands import tool
-
 from app.db.repositories.goals import GoalsRepository
 from app.db.repositories.tasks import TasksRepository
 from app.db.repositories.reminders import RemindersRepository
 from app.db.repositories.insights import InsightsRepository
+from app.db.repositories.agent_context import AgentContextRepository
 
 
 _goals_repo = GoalsRepository()
 _tasks_repo = TasksRepository()
 _reminders_repo = RemindersRepository()
 _insights_repo = InsightsRepository()
+_context_repo = AgentContextRepository()
 
 
-@tool
 def decompose_goal_into_plan(
     user_id: str,
     goal_id: str,
@@ -143,6 +142,18 @@ def decompose_goal_into_plan(
         "activeAgent": "planner",
     })
 
+    # Publish to context bus
+    _context_repo.publish(user_id, {
+        "sourceAgent": "kai",
+        "eventType": "plan_created",
+        "summary": (
+            f"Created plan for \"{goal.get('title', '')}\": "
+            f"{len(milestones)} milestones, {len(created_tasks)} tasks, "
+            f"{len(created_reminders)} reminders"
+        ),
+        "targetAgents": ["all"],
+    })
+
     return {
         "goalId": goal_id,
         "goalTitle": goal.get("title", ""),
@@ -154,7 +165,6 @@ def decompose_goal_into_plan(
     }
 
 
-@tool
 def adapt_plan(user_id: str, goal_id: str) -> dict:
     """Review a goal's progress and adapt the plan.
 
@@ -243,11 +253,10 @@ def adapt_plan(user_id: str, goal_id: str) -> dict:
     }
 
 
-@tool
 def reschedule_failed_tasks(
     user_id: str,
     goal_id: str,
-    days_forward: int = 3,
+    days_forward: int,
 ) -> dict:
     """Reschedule overdue/failed tasks by pushing their due dates forward.
 
@@ -257,12 +266,14 @@ def reschedule_failed_tasks(
     Args:
         user_id: The authenticated user's ID.
         goal_id: The goal whose tasks to reschedule.
-        days_forward: How many days to push overdue tasks forward (default 3).
+        days_forward: How many days to push overdue tasks forward. Use 3 as a reasonable default.
 
     Returns:
         Summary of rescheduled tasks.
     """
     from datetime import timedelta
+
+    actual_days = days_forward if days_forward > 0 else 3
 
     all_tasks = _tasks_repo.list_all(user_id, goal_id=goal_id)
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -275,7 +286,7 @@ def reschedule_failed_tasks(
         if dd and dd < now_iso:
             try:
                 old_date = datetime.strptime(dd, "%Y-%m-%d")
-                new_date = datetime.now(timezone.utc) + timedelta(days=days_forward)
+                new_date = datetime.now(timezone.utc) + timedelta(days=actual_days)
                 new_dd = new_date.strftime("%Y-%m-%d")
                 task_id = t.get("id", t.get("taskId", ""))
                 _tasks_repo.update(user_id, task_id, {
@@ -296,13 +307,13 @@ def reschedule_failed_tasks(
         _insights_repo.create(user_id, {
             "type": "reschedule",
             "title": f"Rescheduled {len(rescheduled)} tasks",
-            "content": f"Moved {len(rescheduled)} overdue tasks forward by {days_forward} days.",
+            "content": f"Moved {len(rescheduled)} overdue tasks forward by {actual_days} days.",
             "relatedGoalId": goal_id,
         })
 
     return {
         "goalId": goal_id,
         "rescheduledCount": len(rescheduled),
-        "daysPushed": days_forward,
+        "daysPushed": actual_days,
         "tasks": rescheduled[:10],
     }

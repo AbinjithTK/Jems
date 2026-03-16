@@ -1,17 +1,14 @@
-"""Repository for jumns-tasks table."""
+"""Repository for tasks subcollection — Firestore."""
 
 from __future__ import annotations
 
-from boto3.dynamodb.conditions import Attr, Key
-
 from app.db.base_repository import BaseRepository, new_id, utc_now_iso
-from app.db.connection import get_table
-from app.db.table_config import TASKS_BY_GOAL_GSI, TASKS_TABLE
+from app.db.table_config import TASKS_SUBCOLLECTION
 
 
 class TasksRepository(BaseRepository):
     def __init__(self):
-        super().__init__(get_table(TASKS_TABLE))
+        super().__init__(TASKS_SUBCOLLECTION)
 
     def create(self, user_id: str, data: dict) -> dict:
         task_id = new_id()
@@ -36,35 +33,22 @@ class TasksRepository(BaseRepository):
             "createdAt": utc_now_iso(),
         }
         item = {k: v for k, v in item.items() if v is not None}
-        return self.put_item(item)
+        return self.put_item(user_id, task_id, item)
 
     def get(self, user_id: str, task_id: str) -> dict:
-        return self.get_item({"userId": user_id, "taskId": task_id})
+        return self.get_item(user_id, task_id)
 
     def list_all(self, user_id: str, goal_id: str | None = None) -> list[dict]:
         if goal_id:
-            return self._list_by_goal(user_id, goal_id)
-        return self.query_by_user(user_id)
-
-    def _list_by_goal(self, user_id: str, goal_id: str) -> list[dict]:
-        """Query tasks filtered by goalId using the TasksByGoal GSI."""
-        try:
-            resp = self._table.query(
-                IndexName=TASKS_BY_GOAL_GSI,
-                KeyConditionExpression=Key("userId").eq(user_id)
-                & Key("goalId").eq(goal_id),
+            return self.query_by_user(
+                user_id,
+                filters=[("goalId", "==", goal_id)],
             )
-            return resp.get("Items", [])
-        except Exception:
-            # Fallback: filter client-side if GSI not available
-            items = self.query_by_user(user_id)
-            return [i for i in items if i.get("goalId") == goal_id]
+        return self.query_by_user(user_id)
 
     def update(self, user_id: str, task_id: str, data: dict) -> dict:
         updates = {k: v for k, v in data.items() if v is not None}
-        return self.update_item(
-            {"userId": user_id, "taskId": task_id}, updates
-        )
+        return self.update_item(user_id, task_id, updates)
 
     def complete(self, user_id: str, task_id: str, data: dict) -> dict:
         updates = {
@@ -76,9 +60,7 @@ class TasksRepository(BaseRepository):
         if data.get("proofType"):
             updates["proofType"] = data["proofType"]
             updates["proofStatus"] = "submitted"
-        return self.update_item(
-            {"userId": user_id, "taskId": task_id}, updates
-        )
+        return self.update_item(user_id, task_id, updates)
 
     def delete(self, user_id: str, task_id: str) -> None:
-        self.delete_item({"userId": user_id, "taskId": task_id})
+        self.delete_item(user_id, task_id)

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/models/agent_card.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 import '../../../core/theme/charcoal_decorations.dart';
 
 class JournalPromptCardWidget extends StatelessWidget {
@@ -13,7 +13,7 @@ class JournalPromptCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CharcoalCard(
-      blobColor: JumnsColors.lavender,
+      blobColor: JemsColors.lavender,
       rotation: -0.5,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,11 +21,11 @@ class JournalPromptCardWidget extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.auto_stories,
-                  color: JumnsColors.lavender, size: 18),
+                  color: JemsColors.lavender, size: 18),
               const SizedBox(width: 8),
               Text('JOURNAL PROMPT',
                   style: GoogleFonts.architectsDaughter(
-                      color: JumnsColors.charcoal,
+                      color: JemsColors.charcoal,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1)),
@@ -34,7 +34,7 @@ class JournalPromptCardWidget extends StatelessWidget {
           const SizedBox(height: 12),
           Text(card.promptText,
               style: GoogleFonts.gloriaHallelujah(
-                  color: JumnsColors.charcoal,
+                  color: JemsColors.charcoal,
                   fontSize: 15,
                   fontWeight: FontWeight.w500)),
           if (card.daySummary.isNotEmpty) ...[
@@ -47,11 +47,11 @@ class JournalPromptCardWidget extends StatelessWidget {
                   children: [
                     Text('• ',
                         style: GoogleFonts.patrickHand(
-                            color: JumnsColors.ink.withAlpha(130))),
+                            color: JemsColors.ink.withAlpha(130))),
                     Expanded(
                       child: Text(item,
                           style: GoogleFonts.patrickHand(
-                              color: JumnsColors.ink.withAlpha(150),
+                              color: JemsColors.ink.withAlpha(150),
                               fontSize: 13)),
                     ),
                   ],

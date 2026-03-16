@@ -8,8 +8,9 @@ import '../../core/models/proactive_insight.dart';
 import '../../core/providers/tasks_provider.dart';
 import '../../core/providers/reminders_provider.dart';
 import '../../core/providers/insights_provider.dart';
-import '../../core/theme/jumns_colors.dart';
+import '../../core/theme/jems_colors.dart';
 import '../../core/theme/charcoal_decorations.dart';
+import 'proof_capture_sheet.dart';
 
 /// Selected segment on the Tasks screen.
 final _segmentProvider = StateProvider<int>((ref) => 0);
@@ -117,7 +118,7 @@ class _Header extends StatelessWidget {
                         style: GoogleFonts.gloriaHallelujah(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
-                            color: JumnsColors.charcoal)),
+                            color: JemsColors.charcoal)),
                   ),
                   Transform.rotate(
                     angle: 1 * math.pi / 180,
@@ -126,7 +127,7 @@ class _Header extends StatelessWidget {
                       style: GoogleFonts.architectsDaughter(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: JumnsColors.ink.withAlpha(130)),
+                          color: JemsColors.ink.withAlpha(130)),
                     ),
                   ),
                 ],
@@ -138,11 +139,11 @@ class _Header extends StatelessWidget {
                     .read(_calendarExpandedProvider.notifier)
                     .update((v) => !v),
                 child: BlobShape(
-                  color: JumnsColors.lavender.withAlpha(80),
+                  color: JemsColors.lavender.withAlpha(80),
                   size: 40,
                   variant: 2,
                   child: const Icon(Icons.calendar_month,
-                      color: JumnsColors.charcoal, size: 20),
+                      color: JemsColors.charcoal, size: 20),
                 ),
               ),
               const SizedBox(width: 8),
@@ -151,11 +152,11 @@ class _Header extends StatelessWidget {
                     ? _showAddTaskSheet(context, ref)
                     : _showAddReminderSheet(context, ref),
                 child: BlobShape(
-                  color: JumnsColors.surface,
+                  color: JemsColors.surface,
                   size: 40,
                   variant: 1,
                   child: const Icon(Icons.add,
-                      color: JumnsColors.charcoal, size: 22),
+                      color: JemsColors.charcoal, size: 22),
                 ),
               ),
             ],
@@ -231,16 +232,16 @@ class _DateCarousel extends StatelessWidget {
               margin: const EdgeInsets.only(right: 8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? JumnsColors.charcoal
+                    ? JemsColors.charcoal
                     : isToday
-                        ? JumnsColors.lavender.withAlpha(60)
-                        : JumnsColors.surface,
+                        ? JemsColors.lavender.withAlpha(60)
+                        : JemsColors.surface,
                 borderRadius:
                     i.isEven ? kCharcoalRadius : kCharcoalRadiusAlt,
                 border: Border.all(
                   color: isSelected
-                      ? JumnsColors.charcoal
-                      : JumnsColors.ink.withAlpha(isToday ? 180 : 80),
+                      ? JemsColors.charcoal
+                      : JemsColors.ink.withAlpha(isToday ? 180 : 80),
                   width: isSelected ? 2.5 : 1.5,
                 ),
               ),
@@ -253,8 +254,8 @@ class _DateCarousel extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: isSelected
-                          ? JumnsColors.paper
-                          : JumnsColors.ink.withAlpha(130),
+                          ? JemsColors.paper
+                          : JemsColors.ink.withAlpha(130),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -264,8 +265,8 @@ class _DateCarousel extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: isSelected
-                          ? JumnsColors.paper
-                          : JumnsColors.charcoal,
+                          ? JemsColors.paper
+                          : JemsColors.charcoal,
                     ),
                   ),
                   if (taskCount > 0)
@@ -275,8 +276,8 @@ class _DateCarousel extends StatelessWidget {
                       height: 6,
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? JumnsColors.mint
-                            : JumnsColors.coral,
+                            ? JemsColors.mint
+                            : JemsColors.coral,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -315,7 +316,7 @@ class _ExpandableCalendar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       child: CharcoalCard(
-        blobColor: JumnsColors.lavender,
+        blobColor: JemsColors.lavender,
         rotation: 0,
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -329,21 +330,21 @@ class _ExpandableCalendar extends StatelessWidget {
                       .read(selectedDateProvider.notifier)
                       .state = DateTime(selected.year, selected.month - 1, 1),
                   child: const Icon(Icons.chevron_left,
-                      color: JumnsColors.charcoal),
+                      color: JemsColors.charcoal),
                 ),
                 Text(
                   _monthLabel(selected),
                   style: GoogleFonts.gloriaHallelujah(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: JumnsColors.charcoal),
+                      color: JemsColors.charcoal),
                 ),
                 GestureDetector(
                   onTap: () => ref
                       .read(selectedDateProvider.notifier)
                       .state = DateTime(selected.year, selected.month + 1, 1),
                   child: const Icon(Icons.chevron_right,
-                      color: JumnsColors.charcoal),
+                      color: JemsColors.charcoal),
                 ),
               ],
             ),
@@ -359,7 +360,7 @@ class _ExpandableCalendar extends StatelessWidget {
                               style: GoogleFonts.architectsDaughter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: JumnsColors.ink.withAlpha(130))),
+                                  color: JemsColors.ink.withAlpha(130))),
                         ),
                       ))
                   .toList(),
@@ -392,14 +393,14 @@ class _ExpandableCalendar extends StatelessWidget {
                       height: 36,
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? JumnsColors.charcoal
+                            ? JemsColors.charcoal
                             : isToday
-                                ? JumnsColors.mint.withAlpha(40)
+                                ? JemsColors.mint.withAlpha(40)
                                 : null,
                         borderRadius: BorderRadius.circular(10),
                         border: isToday && !isSelected
                             ? Border.all(
-                                color: JumnsColors.ink, width: 1.5)
+                                color: JemsColors.ink, width: 1.5)
                             : null,
                       ),
                       child: Stack(
@@ -411,8 +412,8 @@ class _ExpandableCalendar extends StatelessWidget {
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: isSelected
-                                  ? JumnsColors.paper
-                                  : JumnsColors.charcoal,
+                                  ? JemsColors.paper
+                                  : JemsColors.charcoal,
                             ),
                           ),
                           if (hasTasks)
@@ -423,8 +424,8 @@ class _ExpandableCalendar extends StatelessWidget {
                                 height: 5,
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? JumnsColors.mint
-                                      : JumnsColors.coral,
+                                      ? JemsColors.mint
+                                      : JemsColors.coral,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -467,9 +468,9 @@ class _OverdueBanner extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: JumnsColors.smearRed.withAlpha(50),
+          color: JemsColors.smearRed.withAlpha(50),
           borderRadius: kCharcoalRadius,
-          border: Border.all(color: JumnsColors.ink, width: 1.5),
+          border: Border.all(color: JemsColors.ink, width: 1.5),
         ),
         child: Row(
           children: [
@@ -481,7 +482,7 @@ class _OverdueBanner extends StatelessWidget {
                 style: GoogleFonts.architectsDaughter(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: JumnsColors.charcoal),
+                    color: JemsColors.charcoal),
               ),
             ),
           ],
@@ -510,9 +511,9 @@ class _SketchSegmentedControl extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: JumnsColors.paperDark.withAlpha(150),
+        color: JemsColors.paperDark.withAlpha(150),
         borderRadius: kCharcoalRadius,
-        border: Border.all(color: JumnsColors.ink, width: 2),
+        border: Border.all(color: JemsColors.ink, width: 2),
       ),
       child: Row(
         children: items.indexed.map((e) {
@@ -526,15 +527,15 @@ class _SketchSegmentedControl extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                 decoration: BoxDecoration(
-                  color: isActive ? JumnsColors.surface : Colors.transparent,
+                  color: isActive ? JemsColors.surface : Colors.transparent,
                   borderRadius: isActive ? kCharcoalRadiusAlt : null,
                   border: isActive
-                      ? Border.all(color: JumnsColors.ink, width: 1.5)
+                      ? Border.all(color: JemsColors.ink, width: 1.5)
                       : null,
                   boxShadow: isActive
                       ? const [
                           BoxShadow(
-                            color: JumnsColors.borderShadow,
+                            color: JemsColors.borderShadow,
                             offset: Offset(1, 2),
                           )
                         ]
@@ -549,8 +550,8 @@ class _SketchSegmentedControl extends StatelessWidget {
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: isActive
-                            ? JumnsColors.charcoal
-                            : JumnsColors.ink.withAlpha(150),
+                            ? JemsColors.charcoal
+                            : JemsColors.ink.withAlpha(150),
                       ),
                     ),
                     if (count > 0) ...[
@@ -560,8 +561,8 @@ class _SketchSegmentedControl extends StatelessWidget {
                             horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
                           color: isActive
-                              ? JumnsColors.charcoal
-                              : JumnsColors.ink.withAlpha(80),
+                              ? JemsColors.charcoal
+                              : JemsColors.ink.withAlpha(80),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
@@ -569,7 +570,7 @@ class _SketchSegmentedControl extends StatelessWidget {
                           style: GoogleFonts.architectsDaughter(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: JumnsColors.paper,
+                            color: JemsColors.paper,
                           ),
                         ),
                       ),
@@ -600,7 +601,7 @@ class _InsightBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = insight.isHigh ? JumnsColors.coral : JumnsColors.amber;
+    final color = insight.isHigh ? JemsColors.coral : JemsColors.amber;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: GestureDetector(
@@ -610,12 +611,12 @@ class _InsightBanner extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: JumnsColors.surface,
+              color: JemsColors.surface,
               borderRadius: kCharcoalRadiusAlt,
-              border: Border.all(color: JumnsColors.ink, width: 2),
+              border: Border.all(color: JemsColors.ink, width: 2),
               boxShadow: const [
                 BoxShadow(
-                  color: JumnsColors.borderShadow,
+                  color: JemsColors.borderShadow,
                   offset: Offset(2, 2),
                 ),
               ],
@@ -641,7 +642,7 @@ class _InsightBanner extends StatelessWidget {
                         style: GoogleFonts.gloriaHallelujah(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: JumnsColors.charcoal,
+                          color: JemsColors.charcoal,
                         ),
                       ),
                       // Only show content if it's human-readable (not raw JSON)
@@ -656,7 +657,7 @@ class _InsightBanner extends StatelessWidget {
                             style: GoogleFonts.architectsDaughter(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
-                              color: JumnsColors.ink,
+                              color: JemsColors.ink,
                             ),
                           ),
                         ),
@@ -672,7 +673,7 @@ class _InsightBanner extends StatelessWidget {
                           style: GoogleFonts.architectsDaughter(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: JumnsColors.charcoal,
+                            color: JemsColors.charcoal,
                           ),
                         ),
                       ),
@@ -686,12 +687,12 @@ class _InsightBanner extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: JumnsColors.paperDark.withAlpha(150),
+                      color: JemsColors.paperDark.withAlpha(150),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: JumnsColors.ink.withAlpha(80), width: 1),
+                      border: Border.all(color: JemsColors.ink.withAlpha(80), width: 1),
                     ),
                     child: Icon(Icons.close,
-                        size: 16, color: JumnsColors.ink),
+                        size: 16, color: JemsColors.ink),
                   ),
                 ),
               ],
@@ -727,7 +728,7 @@ class _TasksContent extends StatelessWidget {
           child: Center(
             child: Text('Could not load tasks',
                 style: GoogleFonts.architectsDaughter(
-                    color: JumnsColors.ink.withAlpha(130),
+                    color: JemsColors.ink.withAlpha(130),
                     fontSize: 16,
                     fontWeight: FontWeight.w700)),
           ),
@@ -740,7 +741,7 @@ class _TasksContent extends StatelessWidget {
             return _EmptyState(
               icon: Icons.check_circle_outline,
               title: isToday ? 'Nothing planned today' : 'No tasks this day',
-              subtitle: 'Ask Jumns to create tasks, or tap + above',
+              subtitle: 'Ask Jems to create tasks, or tap + above',
             );
           }
 
@@ -756,8 +757,14 @@ class _TasksContent extends StatelessWidget {
                     dateLabel: isToday
                         ? "Today's Focus"
                         : _formatDateLabel(selected),
-                    onToggle: (id) =>
-                        ref.read(tasksNotifierProvider.notifier).complete(id),
+                    onToggle: (id) {
+                      final task = active.firstWhere((t) => t.id == id);
+                      if (task.requiresProof) {
+                        showProofCaptureSheet(context, task);
+                      } else {
+                        ref.read(tasksNotifierProvider.notifier).complete(id);
+                      }
+                    },
                     onDelete: (id) =>
                         ref.read(tasksNotifierProvider.notifier).delete(id),
                   ),
@@ -806,13 +813,16 @@ class _TasksContent extends StatelessWidget {
         ),
       ),
       const SizedBox(height: 8),
-      Wrap(
-        spacing: 10,
-        runSpacing: 10,
-        children: habits.indexed.map((e) {
-          final (i, habit) = e;
-          return _HabitChip(habit: habit, index: i);
-        }).toList(),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: habits.indexed.map((e) {
+            final (i, habit) = e;
+            return _HabitChip(habit: habit, index: i);
+          }).toList(),
+        ),
       ),
     ];
   }
@@ -839,7 +849,7 @@ class _DayFocusCard extends StatelessWidget {
     if (focusTasks.isEmpty) return const SizedBox.shrink();
 
     return CharcoalCard(
-      blobColor: JumnsColors.lavender,
+      blobColor: JemsColors.lavender,
       rotation: -1,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -847,21 +857,21 @@ class _DayFocusCard extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.wb_sunny,
-                  color: JumnsColors.charcoal, size: 22),
+                  color: JemsColors.charcoal, size: 22),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(dateLabel,
                     style: GoogleFonts.gloriaHallelujah(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: JumnsColors.charcoal)),
+                        color: JemsColors.charcoal)),
               ),
               Text(
                 '${focusTasks.length} tasks',
                 style: GoogleFonts.architectsDaughter(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: JumnsColors.ink.withAlpha(130)),
+                    color: JemsColors.ink.withAlpha(130)),
               ),
             ],
           ),
@@ -876,7 +886,7 @@ class _DayFocusCard extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(Icons.delete_outline,
-                        color: JumnsColors.error.withAlpha(180)),
+                        color: JemsColors.error.withAlpha(180)),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -897,9 +907,11 @@ class _DayFocusCard extends StatelessWidget {
                           children: [
                             Text(
                               t.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.architectsDaughter(
                                 fontSize: 17,
-                                color: JumnsColors.charcoal,
+                                color: JemsColors.charcoal,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -908,7 +920,7 @@ class _DayFocusCard extends StatelessWidget {
                                   style: GoogleFonts.architectsDaughter(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w700,
-                                      color: JumnsColors.coral)),
+                                      color: JemsColors.coral)),
                             if (t.detail.isNotEmpty)
                               Padding(
                                 padding: const EdgeInsets.only(top: 2),
@@ -919,7 +931,7 @@ class _DayFocusCard extends StatelessWidget {
                                         fontSize: 12,
                                         fontWeight: FontWeight.w700,
                                         color:
-                                            JumnsColors.ink.withAlpha(120))),
+                                            JemsColors.ink.withAlpha(120))),
                               ),
                           ],
                         ),
@@ -952,26 +964,26 @@ class _TaskMeta extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
               decoration: BoxDecoration(
-                color: JumnsColors.coral.withAlpha(80),
+                color: JemsColors.coral.withAlpha(80),
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text('!',
                   style: GoogleFonts.architectsDaughter(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: JumnsColors.charcoal)),
+                      color: JemsColors.charcoal)),
             ),
           ),
         if (task.requiresProof)
           Padding(
             padding: const EdgeInsets.only(left: 4),
             child: Icon(Icons.camera_alt_outlined,
-                size: 16, color: JumnsColors.ink.withAlpha(150)),
+                size: 16, color: JemsColors.ink.withAlpha(150)),
           ),
         if (task.goalId != null)
           Padding(
             padding: const EdgeInsets.only(left: 4),
-            child: Icon(Icons.flag_outlined, size: 16, color: JumnsColors.mint),
+            child: Icon(Icons.flag_outlined, size: 16, color: JemsColors.mint),
           ),
       ],
     );
@@ -986,33 +998,44 @@ class _HabitChip extends StatelessWidget {
   const _HabitChip({required this.habit, required this.index});
 
   static const _colors = [
-    JumnsColors.mint,
-    JumnsColors.coral,
-    JumnsColors.lavender,
-    JumnsColors.amber,
+    JemsColors.mint,
+    JemsColors.coral,
+    JemsColors.lavender,
+    JemsColors.amber,
   ];
 
   @override
   Widget build(BuildContext context) {
     final color = _colors[index % _colors.length];
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: color.withAlpha(50),
-        borderRadius: kCharcoalRadiusAlt,
-        border: Border.all(color: JumnsColors.ink, width: 1.5),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.repeat, size: 14, color: JumnsColors.ink.withAlpha(150)),
-          const SizedBox(width: 6),
-          Text(habit.title,
-              style: GoogleFonts.architectsDaughter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: JumnsColors.charcoal)),
-        ],
+    // Constrain chip width so long habit titles don't overflow the screen.
+    final maxWidth = MediaQuery.of(context).size.width - 48;
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: maxWidth),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: color.withAlpha(50),
+          borderRadius: kCharcoalRadiusAlt,
+          border: Border.all(color: JemsColors.ink, width: 1.5),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Icon(Icons.repeat, size: 14, color: JemsColors.ink.withAlpha(150)),
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(habit.title,
+                  style: GoogleFonts.architectsDaughter(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: JemsColors.charcoal)),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1038,13 +1061,13 @@ class _CompletedTaskRow extends StatelessWidget {
               style: GoogleFonts.architectsDaughter(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                color: JumnsColors.ink.withAlpha(100),
+                color: JemsColors.ink.withAlpha(100),
                 decoration: TextDecoration.lineThrough,
               ),
             ),
           ),
           if (task.proofStatus == 'verified')
-            Icon(Icons.verified, size: 16, color: JumnsColors.success),
+            Icon(Icons.verified, size: 16, color: JemsColors.success),
         ],
       ),
     );
@@ -1073,7 +1096,7 @@ class _RemindersContent extends StatelessWidget {
           child: Center(
             child: Text('Could not load reminders',
                 style: GoogleFonts.architectsDaughter(
-                    color: JumnsColors.ink.withAlpha(130),
+                    color: JemsColors.ink.withAlpha(130),
                     fontSize: 16,
                     fontWeight: FontWeight.w700)),
           ),
@@ -1086,7 +1109,7 @@ class _RemindersContent extends StatelessWidget {
             return _EmptyState(
               icon: Icons.notifications_none,
               title: 'No reminders',
-              subtitle: 'Ask Jumns to set reminders, or tap + above',
+              subtitle: 'Ask Jems to set reminders, or tap + above',
             );
           }
 
@@ -1191,7 +1214,7 @@ class _RemindersContent extends StatelessWidget {
 void _showSnoozeSheet(BuildContext context, WidgetRef ref, Reminder reminder) {
   showModalBottomSheet(
     context: context,
-    backgroundColor: JumnsColors.paper,
+    backgroundColor: JemsColors.paper,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -1206,7 +1229,7 @@ void _showSnoozeSheet(BuildContext context, WidgetRef ref, Reminder reminder) {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: JumnsColors.ink.withAlpha(60),
+                color: JemsColors.ink.withAlpha(60),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1216,14 +1239,14 @@ void _showSnoozeSheet(BuildContext context, WidgetRef ref, Reminder reminder) {
               style: GoogleFonts.gloriaHallelujah(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: JumnsColors.charcoal)),
+                  color: JemsColors.charcoal)),
           const SizedBox(height: 4),
           Text(
             reminder.title,
             style: GoogleFonts.architectsDaughter(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: JumnsColors.ink.withAlpha(150)),
+                color: JemsColors.ink.withAlpha(150)),
           ),
           if (reminder.snoozeCount > 0) ...[
             const SizedBox(height: 4),
@@ -1232,7 +1255,7 @@ void _showSnoozeSheet(BuildContext context, WidgetRef ref, Reminder reminder) {
               style: GoogleFonts.architectsDaughter(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: JumnsColors.coral),
+                  color: JemsColors.coral),
             ),
           ],
           const SizedBox(height: 16),
@@ -1316,12 +1339,12 @@ class _SnoozeOption extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         decoration: BoxDecoration(
-          color: JumnsColors.surface,
+          color: JemsColors.surface,
           borderRadius: kCharcoalRadiusAlt,
-          border: Border.all(color: JumnsColors.ink, width: 2),
+          border: Border.all(color: JemsColors.ink, width: 2),
           boxShadow: const [
             BoxShadow(
-              color: JumnsColors.borderShadow,
+              color: JemsColors.borderShadow,
               offset: Offset(1, 2),
             ),
           ],
@@ -1331,7 +1354,7 @@ class _SnoozeOption extends StatelessWidget {
           style: GoogleFonts.architectsDaughter(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: JumnsColors.charcoal),
+              color: JemsColors.charcoal),
         ),
       ),
     );
@@ -1364,11 +1387,11 @@ class _ReminderCard extends StatelessWidget {
     Icons.medication,
   ];
   static const _colors = [
-    JumnsColors.mint,
-    JumnsColors.coral,
-    JumnsColors.lavender,
-    JumnsColors.amber,
-    JumnsColors.markerBlue,
+    JemsColors.mint,
+    JemsColors.coral,
+    JemsColors.lavender,
+    JemsColors.amber,
+    JemsColors.markerBlue,
   ];
 
   @override
@@ -1384,18 +1407,18 @@ class _ReminderCard extends StatelessWidget {
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 16),
           child: Icon(Icons.delete_outline,
-              color: JumnsColors.error.withAlpha(180)),
+              color: JemsColors.error.withAlpha(180)),
         ),
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: JumnsColors.surface,
+            color: JemsColors.surface,
             borderRadius:
                 index.isEven ? kCharcoalRadius : kCharcoalRadiusAlt,
-            border: Border.all(color: JumnsColors.ink, width: 2),
+            border: Border.all(color: JemsColors.ink, width: 2),
             boxShadow: const [
               BoxShadow(
-                color: JumnsColors.borderShadow,
+                color: JemsColors.borderShadow,
                 offset: Offset(2, 2),
               ),
             ],
@@ -1407,7 +1430,7 @@ class _ReminderCard extends StatelessWidget {
                 size: 40,
                 variant: index % 4,
                 child: Icon(_icons[index % _icons.length],
-                    color: JumnsColors.charcoal, size: 20),
+                    color: JemsColors.charcoal, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1415,16 +1438,18 @@ class _ReminderCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(reminder.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.architectsDaughter(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: JumnsColors.charcoal)),
+                            color: JemsColors.charcoal)),
                     const SizedBox(height: 2),
                     Row(
                       children: [
                         Icon(Icons.schedule,
                             size: 12,
-                            color: JumnsColors.ink.withAlpha(130)),
+                            color: JemsColors.ink.withAlpha(130)),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(reminder.time,
@@ -1432,12 +1457,12 @@ class _ReminderCard extends StatelessWidget {
                               style: GoogleFonts.architectsDaughter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: JumnsColors.ink.withAlpha(130))),
+                                  color: JemsColors.ink.withAlpha(130))),
                         ),
                         if (reminder.goalId != null) ...[
                           const SizedBox(width: 8),
                           Icon(Icons.flag_outlined,
-                              size: 12, color: JumnsColors.mint),
+                              size: 12, color: JemsColors.mint),
                         ],
                         if (reminder.isSnoozed) ...[
                           const SizedBox(width: 8),
@@ -1445,7 +1470,7 @@ class _ReminderCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 5, vertical: 1),
                             decoration: BoxDecoration(
-                              color: JumnsColors.amber.withAlpha(80),
+                              color: JemsColors.amber.withAlpha(80),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -1453,7 +1478,7 @@ class _ReminderCard extends StatelessWidget {
                               style: GoogleFonts.architectsDaughter(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
-                                  color: JumnsColors.charcoal),
+                                  color: JemsColors.charcoal),
                             ),
                           ),
                         ],
@@ -1469,11 +1494,11 @@ class _ReminderCard extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   margin: const EdgeInsets.only(right: 4),
                   decoration: BoxDecoration(
-                    color: JumnsColors.amber.withAlpha(60),
+                    color: JemsColors.amber.withAlpha(60),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(Icons.snooze,
-                      size: 18, color: JumnsColors.ink.withAlpha(180)),
+                      size: 18, color: JemsColors.ink.withAlpha(180)),
                 ),
               ),
               // Pause button
@@ -1482,11 +1507,11 @@ class _ReminderCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: JumnsColors.paperDark.withAlpha(100),
+                    color: JemsColors.paperDark.withAlpha(100),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(Icons.pause,
-                      size: 18, color: JumnsColors.ink.withAlpha(150)),
+                      size: 18, color: JemsColors.ink.withAlpha(150)),
                 ),
               ),
             ],
@@ -1516,10 +1541,10 @@ class _ReminderTile extends StatelessWidget {
     Icons.schedule,
   ];
   static const _colors = [
-    JumnsColors.coral,
-    JumnsColors.lavender,
-    JumnsColors.mint,
-    JumnsColors.amber,
+    JemsColors.coral,
+    JemsColors.lavender,
+    JemsColors.mint,
+    JemsColors.amber,
   ];
 
   @override
@@ -1532,10 +1557,10 @@ class _ReminderTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: JumnsColors.surface,
+            color: JemsColors.surface,
             borderRadius:
                 index.isEven ? kCharcoalRadius : kCharcoalRadiusAlt,
-            border: Border.all(color: JumnsColors.ink, width: 2),
+            border: Border.all(color: JemsColors.ink, width: 2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1548,43 +1573,53 @@ class _ReminderTile extends StatelessWidget {
                   GestureDetector(
                     onTap: onSnooze,
                     child: Icon(Icons.snooze,
-                        size: 18, color: JumnsColors.ink.withAlpha(130)),
+                        size: 18, color: JemsColors.ink.withAlpha(130)),
                   ),
                 ],
               ),
               const SizedBox(height: 6),
               Text(reminder.time,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.architectsDaughter(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: JumnsColors.ink)),
+                      color: JemsColors.ink)),
               const SizedBox(height: 4),
               Text(reminder.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.architectsDaughter(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: JumnsColors.charcoal)),
+                      color: JemsColors.charcoal)),
               if (reminder.isSnoozed) ...[
                 const SizedBox(height: 4),
                 Text(
                   'Snoozed ${reminder.snoozeCount}x',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.architectsDaughter(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: JumnsColors.amber),
+                      color: JemsColors.amber),
                 ),
               ] else if (reminder.goalId != null) ...[
                 const SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(Icons.flag_outlined,
-                        size: 12, color: JumnsColors.mint),
+                        size: 12, color: JemsColors.mint),
                     const SizedBox(width: 4),
-                    Text('Linked to goal',
-                        style: GoogleFonts.architectsDaughter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: JumnsColors.ink.withAlpha(120))),
+                    Flexible(
+                      child: Text('Linked to goal',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.architectsDaughter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: JemsColors.ink.withAlpha(120))),
+                    ),
                   ],
                 ),
               ],
@@ -1610,7 +1645,7 @@ class _PausedReminderRow extends StatelessWidget {
       child: Row(
         children: [
           Icon(Icons.notifications_paused,
-              size: 18, color: JumnsColors.ink.withAlpha(100)),
+              size: 18, color: JemsColors.ink.withAlpha(100)),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1618,7 +1653,7 @@ class _PausedReminderRow extends StatelessWidget {
               style: GoogleFonts.architectsDaughter(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                color: JumnsColors.ink.withAlpha(100),
+                color: JemsColors.ink.withAlpha(100),
               ),
             ),
           ),
@@ -1628,7 +1663,7 @@ class _PausedReminderRow extends StatelessWidget {
                 style: GoogleFonts.architectsDaughter(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: JumnsColors.charcoal,
+                    color: JemsColors.charcoal,
                     decoration: TextDecoration.underline)),
           ),
         ],
@@ -1668,7 +1703,7 @@ class _EmptyState extends StatelessWidget {
                     width: 72,
                     height: 72,
                     decoration: BoxDecoration(
-                      color: JumnsColors.lavender.withAlpha(60),
+                      color: JemsColors.lavender.withAlpha(60),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.elliptical(64, 55),
                         topRight: Radius.elliptical(36, 58),
@@ -1678,7 +1713,7 @@ class _EmptyState extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(icon, size: 40, color: JumnsColors.ink.withAlpha(100)),
+                Icon(icon, size: 40, color: JemsColors.ink.withAlpha(100)),
               ],
             ),
             const SizedBox(height: 16),
@@ -1686,14 +1721,14 @@ class _EmptyState extends StatelessWidget {
                 style: GoogleFonts.gloriaHallelujah(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: JumnsColors.ink.withAlpha(150))),
+                    color: JemsColors.ink.withAlpha(150))),
             const SizedBox(height: 6),
             Text(subtitle,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.architectsDaughter(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: JumnsColors.ink.withAlpha(100))),
+                    color: JemsColors.ink.withAlpha(100))),
           ],
         ),
       ),
@@ -1714,7 +1749,7 @@ void _showAddTaskSheet(BuildContext context, WidgetRef ref) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: JumnsColors.paper,
+    backgroundColor: JemsColors.paper,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -1731,7 +1766,7 @@ void _showAddTaskSheet(BuildContext context, WidgetRef ref) {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: JumnsColors.ink.withAlpha(60),
+                  color: JemsColors.ink.withAlpha(60),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -1741,7 +1776,7 @@ void _showAddTaskSheet(BuildContext context, WidgetRef ref) {
                 style: GoogleFonts.gloriaHallelujah(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: JumnsColors.charcoal)),
+                    color: JemsColors.charcoal)),
             const SizedBox(height: 16),
             _SketchTextField(controller: titleCtrl, hint: 'What needs doing?'),
             const SizedBox(height: 12),
@@ -1768,22 +1803,22 @@ void _showAddTaskSheet(BuildContext context, WidgetRef ref) {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: JumnsColors.lavender.withAlpha(50),
+                  color: JemsColors.lavender.withAlpha(50),
                   borderRadius: kCharcoalRadiusAlt,
-                  border: Border.all(color: JumnsColors.ink, width: 1.5),
+                  border: Border.all(color: JemsColors.ink, width: 1.5),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.calendar_today,
-                        size: 14, color: JumnsColors.ink.withAlpha(150)),
+                        size: 14, color: JemsColors.ink.withAlpha(150)),
                     const SizedBox(width: 6),
                     Text(
                       dueDate,
                       style: GoogleFonts.architectsDaughter(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: JumnsColors.charcoal),
+                          color: JemsColors.charcoal),
                     ),
                   ],
                 ),
@@ -1803,11 +1838,11 @@ void _showAddTaskSheet(BuildContext context, WidgetRef ref) {
                           horizontal: 14, vertical: 8),
                       decoration: BoxDecoration(
                         color: isActive
-                            ? JumnsColors.charcoal
-                            : JumnsColors.paperDark,
+                            ? JemsColors.charcoal
+                            : JemsColors.paperDark,
                         borderRadius: kCharcoalRadiusAlt,
                         border:
-                            Border.all(color: JumnsColors.ink, width: 1.5),
+                            Border.all(color: JemsColors.ink, width: 1.5),
                       ),
                       child: Text(
                         t[0].toUpperCase() + t.substring(1),
@@ -1815,8 +1850,8 @@ void _showAddTaskSheet(BuildContext context, WidgetRef ref) {
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: isActive
-                              ? JumnsColors.paper
-                              : JumnsColors.charcoal,
+                              ? JemsColors.paper
+                              : JemsColors.charcoal,
                         ),
                       ),
                     ),
@@ -1841,8 +1876,8 @@ void _showAddTaskSheet(BuildContext context, WidgetRef ref) {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: JumnsColors.charcoal,
-                  foregroundColor: JumnsColors.paper,
+                  backgroundColor: JemsColors.charcoal,
+                  foregroundColor: JemsColors.paper,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: kCharcoalRadius,
@@ -1869,7 +1904,7 @@ void _showAddReminderSheet(BuildContext context, WidgetRef ref) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: JumnsColors.paper,
+    backgroundColor: JemsColors.paper,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -1885,7 +1920,7 @@ void _showAddReminderSheet(BuildContext context, WidgetRef ref) {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: JumnsColors.ink.withAlpha(60),
+                color: JemsColors.ink.withAlpha(60),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1895,7 +1930,7 @@ void _showAddReminderSheet(BuildContext context, WidgetRef ref) {
               style: GoogleFonts.gloriaHallelujah(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: JumnsColors.charcoal)),
+                  color: JemsColors.charcoal)),
           const SizedBox(height: 16),
           _SketchTextField(
               controller: titleCtrl, hint: 'What to remember?'),
@@ -1918,8 +1953,8 @@ void _showAddReminderSheet(BuildContext context, WidgetRef ref) {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: JumnsColors.charcoal,
-                foregroundColor: JumnsColors.paper,
+                backgroundColor: JemsColors.charcoal,
+                foregroundColor: JemsColors.paper,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: kCharcoalRadius,
@@ -1951,29 +1986,29 @@ class _SketchTextField extends StatelessWidget {
       style: GoogleFonts.architectsDaughter(
           fontSize: 16,
           fontWeight: FontWeight.w700,
-          color: JumnsColors.charcoal),
+          color: JemsColors.charcoal),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.architectsDaughter(
             fontSize: 16,
             fontWeight: FontWeight.w700,
-            color: JumnsColors.ink.withAlpha(80)),
+            color: JemsColors.ink.withAlpha(80)),
         filled: true,
-        fillColor: JumnsColors.surface,
+        fillColor: JemsColors.surface,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: kCharcoalRadius,
-          borderSide: const BorderSide(color: JumnsColors.ink, width: 2),
+          borderSide: const BorderSide(color: JemsColors.ink, width: 2),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: kCharcoalRadius,
-          borderSide: const BorderSide(color: JumnsColors.ink, width: 2),
+          borderSide: const BorderSide(color: JemsColors.ink, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: kCharcoalRadius,
           borderSide:
-              const BorderSide(color: JumnsColors.charcoal, width: 2.5),
+              const BorderSide(color: JemsColors.charcoal, width: 2.5),
         ),
       ),
     );

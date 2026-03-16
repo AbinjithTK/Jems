@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../core/providers/messages_provider.dart';
-import '../../core/theme/jumns_colors.dart';
+import '../../core/theme/jems_colors.dart';
 import '../../core/theme/charcoal_decorations.dart';
 
 class VoiceModeScreen extends ConsumerStatefulWidget {
@@ -131,7 +131,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: JumnsColors.paper,
+      backgroundColor: JemsColors.paper,
       body: SafeArea(
         child: Column(
           children: [
@@ -143,10 +143,10 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: BlobShape(
-                      color: JumnsColors.surface,
+                      color: JemsColors.surface,
                       size: 40,
                       child: const Icon(Icons.close_rounded,
-                          color: JumnsColors.charcoal, size: 20),
+                          color: JemsColors.charcoal, size: 20),
                     ),
                   ),
                   const Spacer(),
@@ -155,15 +155,15 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                         horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
                       color: _isListening
-                          ? JumnsColors.mint.withAlpha(60)
-                          : JumnsColors.lavender.withAlpha(60),
+                          ? JemsColors.mint.withAlpha(60)
+                          : JemsColors.lavender.withAlpha(60),
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.elliptical(14, 10),
                         topRight: Radius.elliptical(10, 14),
                         bottomLeft: Radius.elliptical(10, 14),
                         bottomRight: Radius.elliptical(14, 10),
                       ),
-                      border: Border.all(color: JumnsColors.ink, width: 1.5),
+                      border: Border.all(color: JemsColors.ink, width: 1.5),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -174,8 +174,8 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: _isListening
-                                ? JumnsColors.mint
-                                : JumnsColors.ink.withAlpha(100),
+                                ? JemsColors.mint
+                                : JemsColors.ink.withAlpha(100),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -184,7 +184,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                               ? 'LISTENING'
                               : (_isSending ? 'THINKING' : 'READY'),
                           style: GoogleFonts.architectsDaughter(
-                            color: JumnsColors.charcoal,
+                            color: JemsColors.charcoal,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.5,
@@ -204,7 +204,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: _transcription.isNotEmpty
-                    ? charcoalBorderDecoration(fill: JumnsColors.surface)
+                    ? charcoalBorderDecoration(fill: JemsColors.surface)
                     : null,
                 child: Text(
                   _transcription.isEmpty
@@ -212,7 +212,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                       : '"$_transcription"',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gloriaHallelujah(
-                    color: JumnsColors.charcoal,
+                    color: JemsColors.charcoal,
                     fontSize: _transcription.isEmpty ? 16 : 20,
                   ),
                 ),
@@ -236,9 +236,9 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
               ),
             ),
             const SizedBox(height: 16),
-            Text('JUMNS',
+            Text('JEMS',
                 style: GoogleFonts.architectsDaughter(
-                    color: JumnsColors.charcoal,
+                    color: JemsColors.charcoal,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1)),
@@ -250,14 +250,14 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: charcoalBorderDecoration(
-                      fill: JumnsColors.mint.withAlpha(40)),
+                      fill: JemsColors.mint.withAlpha(40)),
                   child: Text(
                     _aiResponse.length > 200
                         ? '${_aiResponse.substring(0, 200)}...'
                         : _aiResponse,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.patrickHand(
-                        color: JumnsColors.ink, fontSize: 15, height: 1.4),
+                        color: JemsColors.ink, fontSize: 15, height: 1.4),
                   ),
                 ),
               ),
@@ -269,7 +269,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: JumnsColors.charcoal.withAlpha(150),
+                    color: JemsColors.charcoal.withAlpha(150),
                   ),
                 ),
               ),
@@ -296,11 +296,11 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                 GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
                   child: BlobShape(
-                    color: JumnsColors.surface,
+                    color: JemsColors.surface,
                     size: 48,
                     variant: 1,
                     child: const Icon(Icons.keyboard_rounded,
-                        color: JumnsColors.charcoal, size: 24),
+                        color: JemsColors.charcoal, size: 24),
                   ),
                 ),
                 // Main mic button
@@ -311,18 +311,18 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                     height: 72,
                     decoration: BoxDecoration(
                       color: _isListening
-                          ? JumnsColors.coral
-                          : JumnsColors.mint,
+                          ? JemsColors.coral
+                          : JemsColors.mint,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.elliptical(64, 55),
                         topRight: Radius.elliptical(36, 58),
                         bottomLeft: Radius.elliptical(27, 42),
                         bottomRight: Radius.elliptical(73, 45),
                       ),
-                      border: Border.all(color: JumnsColors.ink, width: 2),
+                      border: Border.all(color: JemsColors.ink, width: 2),
                       boxShadow: const [
                         BoxShadow(
-                          color: JumnsColors.borderShadow,
+                          color: JemsColors.borderShadow,
                           offset: Offset(2, 3),
                           blurRadius: 0,
                         ),
@@ -330,7 +330,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                     ),
                     child: Icon(
                       _isListening ? Icons.stop_rounded : Icons.mic_rounded,
-                      color: JumnsColors.charcoal,
+                      color: JemsColors.charcoal,
                       size: 32,
                     ),
                   ),
@@ -338,11 +338,11 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                 GestureDetector(
                   onTap: () => _showVoiceOptions(context),
                   child: BlobShape(
-                    color: JumnsColors.surface,
+                    color: JemsColors.surface,
                     size: 48,
                     variant: 2,
                     child: const Icon(Icons.more_horiz_rounded,
-                        color: JumnsColors.charcoal, size: 24),
+                        color: JemsColors.charcoal, size: 24),
                   ),
                 ),
               ],
@@ -351,7 +351,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
             Text(
               _isListening ? 'TAP TO STOP' : 'TAP TO SPEAK',
               style: GoogleFonts.architectsDaughter(
-                  color: JumnsColors.ink.withAlpha(100),
+                  color: JemsColors.ink.withAlpha(100),
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5),
@@ -361,7 +361,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
                 padding: const EdgeInsets.only(top: 4),
                 child: Text('Speech recognition unavailable on this device',
                     style: GoogleFonts.architectsDaughter(
-                        color: JumnsColors.coral,
+                        color: JemsColors.coral,
                         fontSize: 10,
                         fontWeight: FontWeight.w700)),
               ),
@@ -375,7 +375,7 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
   void _showVoiceOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: JumnsColors.paper,
+      backgroundColor: JemsColors.paper,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -385,26 +385,26 @@ class _VoiceModeScreenState extends ConsumerState<VoiceModeScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.speed, color: JumnsColors.charcoal),
+              leading: const Icon(Icons.speed, color: JemsColors.charcoal),
               title: Text('Speech Rate',
                   style: GoogleFonts.architectsDaughter(
-                      color: JumnsColors.charcoal,
+                      color: JemsColors.charcoal,
                       fontWeight: FontWeight.w700)),
               subtitle: Text('Normal',
                   style: GoogleFonts.patrickHand(
-                      color: JumnsColors.ink.withAlpha(130))),
+                      color: JemsColors.ink.withAlpha(130))),
               onTap: () => Navigator.pop(ctx),
             ),
             ListTile(
               leading: const Icon(Icons.record_voice_over,
-                  color: JumnsColors.charcoal),
+                  color: JemsColors.charcoal),
               title: Text('Voice Style',
                   style: GoogleFonts.architectsDaughter(
-                      color: JumnsColors.charcoal,
+                      color: JemsColors.charcoal,
                       fontWeight: FontWeight.w700)),
               subtitle: Text('Default',
                   style: GoogleFonts.patrickHand(
-                      color: JumnsColors.ink.withAlpha(130))),
+                      color: JemsColors.ink.withAlpha(130))),
               onTap: () => Navigator.pop(ctx),
             ),
           ],
@@ -429,7 +429,7 @@ class _OrbPainter extends CustomPainter {
 
     // Outer glow — mint when active, lavender when idle
     final glowColor =
-        isActive ? JumnsColors.mint.withAlpha(30) : JumnsColors.lavender.withAlpha(20);
+        isActive ? JemsColors.mint.withAlpha(30) : JemsColors.lavender.withAlpha(20);
     canvas.drawCircle(
       center,
       radius + 15,
@@ -443,13 +443,13 @@ class _OrbPainter extends CustomPainter {
       center,
       radius + 2,
       Paint()
-        ..color = JumnsColors.ink
+        ..color = JemsColors.ink
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.5,
     );
 
     // Main orb fill
-    final orbColor = isActive ? JumnsColors.mint : JumnsColors.lavender;
+    final orbColor = isActive ? JemsColors.mint : JemsColors.lavender;
     canvas.drawCircle(
       center,
       radius,
@@ -469,7 +469,7 @@ class _OrbPainter extends CustomPainter {
       canvas.drawCircle(
         dotCenter,
         4,
-        Paint()..color = isActive ? JumnsColors.charcoal : JumnsColors.ink,
+        Paint()..color = isActive ? JemsColors.charcoal : JemsColors.ink,
       );
     }
   }
@@ -500,7 +500,7 @@ class _WaveformPainter extends CustomPainter {
         RRect.fromRectAndRadius(
             Rect.fromLTWH(x, y, barWidth, height),
             const Radius.circular(2)),
-        Paint()..color = JumnsColors.charcoal.withAlpha((150 * wave).toInt()),
+        Paint()..color = JemsColors.charcoal.withAlpha((150 * wave).toInt()),
       );
     }
   }

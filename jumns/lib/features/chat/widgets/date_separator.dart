@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 
 /// Pure function: format a date label.
 String formatDateLabel(DateTime date, DateTime today) {
@@ -33,7 +33,7 @@ class DateSeparator extends StatelessWidget {
           Expanded(
             child: Container(
               height: 1.5,
-              color: JumnsColors.ink.withAlpha(120),
+              color: JemsColors.ink.withAlpha(120),
               transform: Matrix4.rotationZ(2 * math.pi / 180),
             ),
           ),
@@ -44,7 +44,7 @@ class DateSeparator extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: JumnsColors.lavender.withAlpha(80),
+                  color: JemsColors.lavender.withAlpha(80),
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.elliptical(64, 55),
                     topRight: Radius.elliptical(36, 58),
@@ -55,7 +55,7 @@ class DateSeparator extends StatelessWidget {
                 child: Text(
                   label,
                   style: GoogleFonts.architectsDaughter(
-                    color: JumnsColors.charcoal.withAlpha(180),
+                    color: JemsColors.charcoal.withAlpha(180),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -67,7 +67,7 @@ class DateSeparator extends StatelessWidget {
           Expanded(
             child: Container(
               height: 1.5,
-              color: JumnsColors.ink.withAlpha(120),
+              color: JemsColors.ink.withAlpha(120),
               transform: Matrix4.rotationZ(-1 * math.pi / 180),
             ),
           ),

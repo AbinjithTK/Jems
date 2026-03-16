@@ -17,6 +17,7 @@ def _to_response(data: dict) -> UserSettingsResponse:
         timezone=data.get("timezone", "UTC"),
         morning_time=data.get("morningTime", "07:00"),
         evening_time=data.get("eveningTime", "21:00"),
+        model=data.get("model", "gemini-2.5-flash"),
     )
 
 

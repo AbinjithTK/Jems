@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 
 /// Charcoal Sketch message bubbles with rich inline badges for plan summaries.
 ///
@@ -31,8 +31,8 @@ class MessageBubble extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isUser
-              ? JumnsColors.markerBlue.withAlpha(200)
-              : JumnsColors.surface,
+              ? JemsColors.markerBlue.withAlpha(200)
+              : JemsColors.surface,
           borderRadius: isUser
               ? const BorderRadius.only(
                   topLeft: Radius.elliptical(48, 10),
@@ -46,7 +46,7 @@ class MessageBubble extends StatelessWidget {
                   bottomLeft: Radius.elliptical(42, 10),
                   bottomRight: Radius.elliptical(10, 48),
                 ),
-          border: Border.all(color: JumnsColors.ink, width: 2),
+          border: Border.all(color: JemsColors.ink, width: 2),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(25),
@@ -89,7 +89,7 @@ class MessageBubble extends StatelessWidget {
     return Text(
       t,
       style: GoogleFonts.architectsDaughter(
-        color: JumnsColors.charcoal,
+        color: JemsColors.charcoal,
         fontSize: 15,
         height: 1.5,
         fontWeight: FontWeight.w700,
@@ -133,7 +133,7 @@ class MessageBubble extends StatelessWidget {
         return Text(
           s.text!,
           style: GoogleFonts.architectsDaughter(
-            color: JumnsColors.charcoal,
+            color: JemsColors.charcoal,
             fontSize: 15,
             height: 1.5,
             fontWeight: FontWeight.w700,
@@ -169,12 +169,12 @@ class _PlanBadge extends StatelessWidget {
 
   static Color _color(String label) {
     final l = label.toLowerCase();
-    if (l.startsWith('milestone')) return JumnsColors.amber;
-    if (l.startsWith('task') || l.startsWith('step')) return JumnsColors.mint;
-    if (l.startsWith('reminder')) return JumnsColors.lavender;
-    if (l.startsWith('goal')) return JumnsColors.coral;
-    if (l.startsWith('habit')) return JumnsColors.markerBlue;
-    return JumnsColors.markerBlue;
+    if (l.startsWith('milestone')) return JemsColors.amber;
+    if (l.startsWith('task') || l.startsWith('step')) return JemsColors.mint;
+    if (l.startsWith('reminder')) return JemsColors.lavender;
+    if (l.startsWith('goal')) return JemsColors.coral;
+    if (l.startsWith('habit')) return JemsColors.markerBlue;
+    return JemsColors.markerBlue;
   }
 
   static IconData _icon(String label) {
@@ -203,7 +203,7 @@ class _PlanBadge extends StatelessWidget {
           bottomLeft: Radius.elliptical(10, 14),
           bottomRight: Radius.elliptical(14, 10),
         ),
-        border: Border.all(color: JumnsColors.ink, width: 1.5),
+        border: Border.all(color: JemsColors.ink, width: 1.5),
         boxShadow: const [
           BoxShadow(
             color: Color(0x30000000),
@@ -215,14 +215,14 @@ class _PlanBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: JumnsColors.charcoal),
+          Icon(icon, size: 14, color: JemsColors.charcoal),
           const SizedBox(width: 4),
           Text(
             count,
             style: GoogleFonts.gloriaHallelujah(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: JumnsColors.charcoal,
+              color: JemsColors.charcoal,
             ),
           ),
           const SizedBox(width: 3),
@@ -231,7 +231,7 @@ class _PlanBadge extends StatelessWidget {
             style: GoogleFonts.architectsDaughter(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: JumnsColors.charcoal,
+              color: JemsColors.charcoal,
             ),
           ),
         ],

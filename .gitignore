@@ -38,3 +38,14 @@ Demo/
 
 # Ignore .kiro
 .kiro/
+
+# Allow deploy directory
+!deploy/
+!deploy/**
+
+# Terraform state and local files
+deploy/.terraform/
+deploy/.terraform.lock.hcl
+deploy/*.tfstate
+deploy/*.tfstate.backup
+deploy/terraform.tfvars

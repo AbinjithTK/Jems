@@ -8,8 +8,6 @@ from __future__ import annotations
 
 import math
 
-from strands import tool
-
 from app.db.repositories.goals import GoalsRepository
 from app.db.repositories.tasks import TasksRepository
 from app.db.repositories.reminders import RemindersRepository
@@ -20,7 +18,6 @@ _tasks_repo = TasksRepository()
 _reminders_repo = RemindersRepository()
 
 
-@tool
 def get_daily_summary(user_id: str) -> dict:
     """Get a comprehensive summary of the user's day.
 
@@ -92,7 +89,6 @@ def get_daily_summary(user_id: str) -> dict:
     }
 
 
-@tool
 def analyze_progress(user_id: str) -> dict:
     """Deep analysis of progress across all goals and tasks.
 
@@ -206,8 +202,7 @@ def analyze_progress(user_id: str) -> dict:
     }
 
 
-@tool
-def smart_suggest(user_id: str, focus: str = "all") -> dict:
+def smart_suggest(user_id: str, focus: str) -> dict:
     """Generate smart suggestions based on current goals, tasks, and patterns.
 
     Use proactively to offer helpful next steps, or when the user says
@@ -215,18 +210,18 @@ def smart_suggest(user_id: str, focus: str = "all") -> dict:
 
     Args:
         user_id: The authenticated user's ID.
-        focus: Optional focus area: "goals", "tasks", "habits", "productivity", or "all".
+        focus: Focus area: "goals", "tasks", "habits", "productivity", or "all". Use "all" as default.
 
     Returns:
         List of prioritized suggestions.
     """
+    actual_focus = focus if focus else "all"
     goals = _goals_repo.list_all(user_id)
     tasks = _tasks_repo.list_all(user_id)
     reminders = _reminders_repo.list_all(user_id)
-
     suggestions: list[dict] = []
 
-    # Goals with no tasks
+    # Goals without tasks
     for g in goals:
         if g.get("completed"):
             continue

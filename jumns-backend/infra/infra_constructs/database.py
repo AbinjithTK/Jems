@@ -1,4 +1,4 @@
-"""DynamoDB construct — 8 tables with GSIs per design spec."""
+"""DynamoDB construct — 12 tables with GSIs per design spec."""
 
 from constructs import Construct
 
@@ -136,6 +136,74 @@ class DatabaseConstruct(Construct):
             removal_policy=removal,
         )
 
+        # --- jumns-connections (PK: userId, SK: connectionId) + ConnectionsByStatus GSI ---
+        self.connections_table = dynamodb.Table(
+            self, "ConnectionsTable",
+            table_name=f"jumns-connections-{stage}",
+            partition_key=dynamodb.Attribute(
+                name="userId", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="connectionId", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            point_in_time_recovery=True,
+            removal_policy=removal,
+        )
+        self.connections_table.add_global_secondary_index(
+            index_name="ConnectionsByStatus",
+            partition_key=dynamodb.Attribute(
+                name="userId", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="status", type=dynamodb.AttributeType.STRING
+            ),
+        )
+
+        # --- jumns-mcp-servers (PK: userId, SK: serverId) ---
+        self.mcp_servers_table = dynamodb.Table(
+            self, "McpServersTable",
+            table_name=f"jumns-mcp-servers-{stage}",
+            partition_key=dynamodb.Attribute(
+                name="userId", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="serverId", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            removal_policy=removal,
+        )
+
+        # --- jumns-journal (PK: userId, SK: createdAt#entryId) ---
+        self.journal_table = dynamodb.Table(
+            self, "JournalTable",
+            table_name=f"jumns-journal-{stage}",
+            partition_key=dynamodb.Attribute(
+                name="userId", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="createdAt#entryId", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            point_in_time_recovery=True,
+            removal_policy=removal,
+        )
+
+        # --- jumns-agent-context (PK: userId, SK: createdAt#ctxId) + TTL ---
+        self.agent_context_table = dynamodb.Table(
+            self, "AgentContextTable",
+            table_name=f"jumns-agent-context-{stage}",
+            partition_key=dynamodb.Attribute(
+                name="userId", type=dynamodb.AttributeType.STRING
+            ),
+            sort_key=dynamodb.Attribute(
+                name="createdAt#ctxId", type=dynamodb.AttributeType.STRING
+            ),
+            billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST,
+            time_to_live_attribute="ttl",
+            removal_policy=removal,
+        )
+
         # Collect all tables for IAM grants
         self.all_tables = [
             self.users_table,
@@ -146,4 +214,8 @@ class DatabaseConstruct(Construct):
             self.skills_table,
             self.insights_table,
             self.access_codes_table,
+            self.connections_table,
+            self.mcp_servers_table,
+            self.journal_table,
+            self.agent_context_table,
         ]

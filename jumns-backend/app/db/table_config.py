@@ -1,18 +1,25 @@
-"""DynamoDB table names and key schemas — read from environment variables."""
+"""Firestore collection names — read from environment variables.
+
+Replaces the previous DynamoDB table names.
+Firestore uses subcollections under users/{userId}/ for most data,
+but collection names are still configurable for flexibility.
+"""
 
 import os
 
-# Table names (set by CDK via Lambda env vars, defaults for local dev)
-USERS_TABLE = os.getenv("USERS_TABLE", "jumns-users")
-MESSAGES_TABLE = os.getenv("MESSAGES_TABLE", "jumns-messages")
-GOALS_TABLE = os.getenv("GOALS_TABLE", "jumns-goals")
-TASKS_TABLE = os.getenv("TASKS_TABLE", "jumns-tasks")
-REMINDERS_TABLE = os.getenv("REMINDERS_TABLE", "jumns-reminders")
-SKILLS_TABLE = os.getenv("SKILLS_TABLE", "jumns-skills")
-INSIGHTS_TABLE = os.getenv("INSIGHTS_TABLE", "jumns-insights")
-ACCESS_CODES_TABLE = os.getenv("ACCESS_CODES_TABLE", "jumns-access-codes")
+# Top-level collection names
+USERS_COLLECTION = os.getenv("USERS_COLLECTION", "users")
+ACCESS_CODES_COLLECTION = os.getenv("ACCESS_CODES_COLLECTION", "access_codes")
 
-# GSI names
-TASKS_BY_GOAL_GSI = "TasksByGoal"
-ACTIVE_REMINDERS_GSI = "ActiveReminders"
-MESSAGES_BY_TYPE_GSI = "MessagesByType"
+# Subcollection names (nested under users/{userId}/)
+MESSAGES_SUBCOLLECTION = os.getenv("MESSAGES_SUBCOLLECTION", "messages")
+GOALS_SUBCOLLECTION = os.getenv("GOALS_SUBCOLLECTION", "goals")
+TASKS_SUBCOLLECTION = os.getenv("TASKS_SUBCOLLECTION", "tasks")
+REMINDERS_SUBCOLLECTION = os.getenv("REMINDERS_SUBCOLLECTION", "reminders")
+SKILLS_SUBCOLLECTION = os.getenv("SKILLS_SUBCOLLECTION", "skills")
+INSIGHTS_SUBCOLLECTION = os.getenv("INSIGHTS_SUBCOLLECTION", "insights")
+CONNECTIONS_SUBCOLLECTION = os.getenv("CONNECTIONS_SUBCOLLECTION", "connections")
+MCP_SERVERS_SUBCOLLECTION = os.getenv("MCP_SERVERS_SUBCOLLECTION", "mcp_servers")
+JOURNAL_SUBCOLLECTION = os.getenv("JOURNAL_SUBCOLLECTION", "journal")
+AGENT_CONTEXT_SUBCOLLECTION = os.getenv("AGENT_CONTEXT_SUBCOLLECTION", "agent_context")
+FRIEND_MESSAGES_SUBCOLLECTION = os.getenv("FRIEND_MESSAGES_SUBCOLLECTION", "friend_messages")

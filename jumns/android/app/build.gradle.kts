@@ -3,10 +3,14 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
+import java.util.Properties
+import java.io.FileInputStream
+
 android {
-    namespace = "com.jumns.assistant"
+    namespace = "com.jems.assistant"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -16,7 +20,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        jvmTarget = "17"
     }
 
     // Release signing — create android/key.properties with:
@@ -28,8 +32,8 @@ android {
     val useReleaseKeystore = keystorePropertiesFile.exists()
 
     if (useReleaseKeystore) {
-        val keystoreProperties = java.util.Properties()
-        keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+        val keystoreProperties = Properties()
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
         signingConfigs {
             create("release") {
                 keyAlias = keystoreProperties["keyAlias"] as String
@@ -41,7 +45,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.jumns.assistant"
+        applicationId = "com.jems.assistant"
         minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

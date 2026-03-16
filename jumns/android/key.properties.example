@@ -1,7 +1,14 @@
-# Android release signing configuration
-# Copy this file to key.properties and fill in your values.
-# DO NOT commit key.properties to version control.
-storePassword=your_store_password
-keyPassword=your_key_password
+# Android Release Signing Configuration
+#
+# 1. Generate a keystore:
+#    keytool -genkey -v -keystore jems-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+# 2. Copy this file to key.properties:
+#    cp key.properties.example key.properties
+#
+# 3. Fill in your values:
+
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
 keyAlias=upload
-storeFile=/path/to/your/upload-keystore.jks
+storeFile=../jems-upload.jks

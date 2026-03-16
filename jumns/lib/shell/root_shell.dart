@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../core/theme/jumns_colors.dart';
+import '../core/theme/jems_colors.dart';
 
 class RootShell extends StatelessWidget {
   final Widget child;
@@ -28,11 +28,11 @@ class RootShell extends StatelessWidget {
 
   // Each active tab gets a pastel blob color
   static const _blobColors = [
-    JumnsColors.markerBlue,
-    JumnsColors.lavender,
-    JumnsColors.mint,
-    JumnsColors.lavender,
-    JumnsColors.lavender,
+    JemsColors.markerBlue,
+    JemsColors.lavender,
+    JemsColors.mint,
+    JemsColors.lavender,
+    JemsColors.lavender,
   ];
 
   @override
@@ -41,7 +41,7 @@ class RootShell extends StatelessWidget {
     final currentIndex = _indexFromLocation(location);
 
     return Scaffold(
-      backgroundColor: JumnsColors.paper,
+      backgroundColor: JemsColors.paper,
       body: child,
       bottomNavigationBar: _CharcoalNavBar(
         currentIndex: currentIndex,
@@ -61,10 +61,10 @@ class _CharcoalNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: JumnsColors.paper.withAlpha(240),
+        color: JemsColors.paper.withAlpha(240),
         border: const Border(
           top: BorderSide(
-            color: JumnsColors.ink,
+            color: JemsColors.ink,
             width: 2,
             style: BorderStyle.solid,
           ),
@@ -82,7 +82,7 @@ class _CharcoalNavBar extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 onTap: () => onTap(i),
                 child: SizedBox(
-                  width: 64,
+                  width: 68,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -112,8 +112,8 @@ class _CharcoalNavBar extends StatelessWidget {
                                 ? RootShell._tabs[i].$2
                                 : RootShell._tabs[i].$1,
                             color: isActive
-                                ? JumnsColors.charcoal
-                                : JumnsColors.ink.withAlpha(150),
+                                ? JemsColors.charcoal
+                                : JemsColors.ink.withAlpha(150),
                             size: isActive ? 26 : 24,
                           ),
                         ],
@@ -121,10 +121,12 @@ class _CharcoalNavBar extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         RootShell._tabs[i].$3,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.architectsDaughter(
                           color: isActive
-                              ? JumnsColors.charcoal
-                              : JumnsColors.ink.withAlpha(150),
+                              ? JemsColors.charcoal
+                              : JemsColors.ink.withAlpha(150),
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                         ),

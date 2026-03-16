@@ -12,8 +12,6 @@ from __future__ import annotations
 import json
 from datetime import datetime, timedelta, timezone
 
-from strands import tool
-
 from app.db.repositories.goals import GoalsRepository
 from app.db.repositories.reminders import RemindersRepository
 from app.db.repositories.tasks import TasksRepository
@@ -23,11 +21,10 @@ _tasks_repo = TasksRepository()
 _reminders_repo = RemindersRepository()
 
 
-@tool
 def get_schedule(
     user_id: str,
-    date: str = "",
-    days: int = 1,
+    date: str,
+    days: int,
 ) -> dict:
     """Get the user's schedule for a date or date range.
 
@@ -36,8 +33,8 @@ def get_schedule(
 
     Args:
         user_id: The authenticated user's ID.
-        date: ISO date string (YYYY-MM-DD). Defaults to today.
-        days: Number of days to include (1 = just that day, 7 = week view).
+        date: ISO date string (YYYY-MM-DD). Use empty string for today.
+        days: Number of days to include (1 = just that day, 7 = week view). Use 1 for single day.
 
     Returns:
         Schedule dict with tasks, reminders, and habits grouped by date.
@@ -138,7 +135,6 @@ def get_schedule(
     }
 
 
-@tool
 def assign_task_to_date(
     user_id: str,
     task_id: str,
@@ -175,7 +171,6 @@ def assign_task_to_date(
         return {"error": f"Task {task_id} not found"}
 
 
-@tool
 def analyze_goal_timeline(
     user_id: str,
     goal_id: str,

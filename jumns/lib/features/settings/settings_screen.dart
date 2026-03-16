@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/messages_provider.dart';
+import '../../core/providers/settings_provider.dart';
 import '../../core/providers/subscription_provider.dart';
-import '../../core/theme/jumns_colors.dart';
-import '../../core/theme/charcoal_decorations.dart';
+import '../../core/theme/spatial_colors.dart';
 import '../../core/utils/url_helper.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -17,7 +16,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authNotifierProvider);
-    final settingsAsync = ref.watch(userSettingsProvider);
+    final settingsAsync = ref.watch(userSettingsNotifierProvider);
     final sub = ref.watch(subscriptionNotifierProvider);
 
     final user = authState.user;
@@ -25,601 +24,538 @@ class SettingsScreen extends ConsumerWidget {
         (user?.email != null ? user!.email.split('@').first : 'User');
     final isPro = sub.isPro;
 
-    return SafeArea(
-      child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Scaffold(
+      backgroundColor: SpatialColors.background,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            _buildTopBar(context),
+            const SizedBox(height: 20),
+            _SpatialProfileSection(name: name),
+            const SizedBox(height: 28),
+            _buildAgentConfig(settingsAsync, context, ref),
+            const SizedBox(height: 16),
+            _buildSubscription(isPro, context),
+            const SizedBox(height: 16),
+            _buildDataPrivacy(context, ref),
+            const SizedBox(height: 16),
+            _buildNotifications(settingsAsync, context, ref),
+            const SizedBox(height: 32),
+            _buildSignOut(context, ref),
+            const SizedBox(height: 20),
+            _buildFooter(),
+            const SizedBox(height: 100),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 8),
+      child: Row(
         children: [
-          // ── Header ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 16, 8, 8),
-            child: Transform.rotate(
-              angle: -1 * math.pi / 180,
-              child: Text('Settings',
-                  style: GoogleFonts.gloriaHallelujah(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: JumnsColors.charcoal)),
-            ),
+          _NeumorphicCircleButton(
+            icon: Icons.arrow_back_rounded,
+            onTap: () => context.pop(),
           ),
-          const DashedSeparator(),
-          const SizedBox(height: 24),
-
-          // ── Profile avatar with overlapping blobs ──
-          Center(
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 112,
-                  height: 112,
-                  child: Stack(
-                    children: [
-                      // Lavender blob behind
-                      Positioned.fill(
-                        child: Transform.rotate(
-                          angle: 12 * math.pi / 180,
-                          child: Transform.scale(
-                            scale: 1.1,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: JumnsColors.lavender.withAlpha(150),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.elliptical(34, 49),
-                                  topRight: Radius.elliptical(66, 62),
-                                  bottomLeft: Radius.elliptical(70, 38),
-                                  bottomRight: Radius.elliptical(30, 51),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Mint blob behind
-                      Positioned.fill(
-                        child: Transform.rotate(
-                          angle: -6 * math.pi / 180,
-                          child: Transform.scale(
-                            scale: 1.05,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: JumnsColors.mint.withAlpha(150),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.elliptical(64, 55),
-                                  topRight: Radius.elliptical(36, 58),
-                                  bottomLeft: Radius.elliptical(27, 42),
-                                  bottomRight: Radius.elliptical(73, 45),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Avatar circle
-                      Positioned.fill(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: JumnsColors.paperDark,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.elliptical(64, 55),
-                              topRight: Radius.elliptical(36, 58),
-                              bottomLeft: Radius.elliptical(27, 42),
-                              bottomRight: Radius.elliptical(73, 45),
-                            ),
-                            border: Border.all(
-                                color: JumnsColors.ink, width: 2),
-                          ),
-                          child: Center(
-                            child: Text(
-                              name.isNotEmpty
-                                  ? name[0].toUpperCase()
-                                  : 'U',
-                              style: GoogleFonts.gloriaHallelujah(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: JumnsColors.charcoal),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Edit button
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: BlobShape(
-                          color: JumnsColors.charcoal,
-                          size: 32,
-                          child: const Icon(Icons.edit,
-                              color: JumnsColors.paper, size: 14),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(name,
-                    style: GoogleFonts.gloriaHallelujah(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: JumnsColors.charcoal)),
-                Transform.rotate(
-                  angle: -1 * math.pi / 180,
-                  child: Text('Making life simpler',
-                      style: GoogleFonts.architectsDaughter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: JumnsColors.ink.withAlpha(130))),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 28),
-
-          // ── Agent Configuration ──
-          Transform.rotate(
-            angle: 1 * math.pi / 180,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: charcoalBorderDecoration(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.smart_toy,
-                          color: JumnsColors.charcoal, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Agent Configuration',
-                          style: GoogleFonts.gloriaHallelujah(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: JumnsColors.charcoal)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  settingsAsync.when(
-                    loading: () => const Center(
-                        child: CircularProgressIndicator()),
-                    error: (_, __) => Text('Could not load settings',
-                        style: GoogleFonts.architectsDaughter(
-                            color: JumnsColors.ink)),
-                    data: (settings) => Column(
-                      children: [
-                        // Model card
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: JumnsColors.mint.withAlpha(40),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.elliptical(34, 49),
-                              topRight: Radius.elliptical(66, 62),
-                              bottomLeft: Radius.elliptical(70, 38),
-                              bottomRight: Radius.elliptical(30, 51),
-                            ),
-                            border: Border.all(
-                                color: JumnsColors.ink, width: 2),
-                          ),
-                          child: Row(
-                            children: [
-                              BlobShape(
-                                color: JumnsColors.mint.withAlpha(180),
-                                size: 40,
-                                variant: 1,
-                                child: const Icon(Icons.auto_awesome,
-                                    color: JumnsColors.charcoal, size: 18),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Gemini 2.5 Flash',
-                                        style: GoogleFonts.gloriaHallelujah(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: JumnsColors.charcoal)),
-                                    Text('Active model',
-                                        style:
-                                            GoogleFonts.architectsDaughter(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w700,
-                                                color: JumnsColors.ink
-                                                    .withAlpha(130))),
-                                  ],
-                                ),
-                              ),
-                              Icon(Icons.swap_horiz,
-                                  color: JumnsColors.ink.withAlpha(130),
-                                  size: 20),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _ConfigTile(
-                                icon: Icons.badge,
-                                label: 'Name',
-                                value: settings?.agentName ?? 'Jumns',
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _ConfigTile(
-                                icon: Icons.psychology,
-                                label: 'Personality',
-                                value:
-                                    settings?.personalityLabel ?? 'Friendly',
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // ── Subscription ──
-          Transform.rotate(
-            angle: -1 * math.pi / 180,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: charcoalBorderDecoration(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.loyalty,
-                          color: JumnsColors.charcoal, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Subscription',
-                          style: GoogleFonts.gloriaHallelujah(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: JumnsColors.charcoal)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: JumnsColors.lavender.withAlpha(50),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.elliptical(34, 49),
-                        topRight: Radius.elliptical(66, 62),
-                        bottomLeft: Radius.elliptical(70, 38),
-                        bottomRight: Radius.elliptical(30, 51),
-                      ),
-                      border: Border.all(color: JumnsColors.ink, width: 2),
-                    ),
-                    child: Row(
-                      children: [
-                        Transform.rotate(
-                          angle: -3 * math.pi / 180,
-                          child: BlobShape(
-                            color: JumnsColors.lavender,
-                            size: 40,
-                            child: const Icon(Icons.star,
-                                color: JumnsColors.charcoal, size: 20),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                isPro ? 'Pro Status' : 'Free Plan',
-                                style: GoogleFonts.gloriaHallelujah(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: JumnsColors.charcoal),
-                              ),
-                              Text(
-                                isPro ? 'Active' : 'Upgrade for more',
-                                style: GoogleFonts.architectsDaughter(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: JumnsColors.ink.withAlpha(150)),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (isPro)
-                          Transform.rotate(
-                            angle: 6 * math.pi / 180,
-                            child: BlobShape(
-                              color: JumnsColors.mint,
-                              size: 32,
-                              child: const Icon(Icons.check,
-                                  color: JumnsColors.charcoal, size: 18),
-                            ),
-                          )
-                        else
-                          ElevatedButton(
-                            onPressed: () => context.push('/paywall'),
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 8),
-                              minimumSize: Size.zero,
-                            ),
-                            child: const Text('Upgrade'),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // ── Data & Privacy ──
-          Transform.rotate(
-            angle: 0.5 * math.pi / 180,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: charcoalBorderDecoration(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.shield,
-                          color: JumnsColors.charcoal, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Data & Privacy',
-                          style: GoogleFonts.gloriaHallelujah(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: JumnsColors.charcoal)),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _SettingsNavRow(
-                      label: 'Privacy Policy',
-                      onTap: () => openUrl(context, JumnsUrls.privacyPolicy)),
-                  const SizedBox(height: 8),
-                  // Clear history — red ink smear
-                  GestureDetector(
-                    onTap: () => _showClearDialog(context, ref),
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.elliptical(64, 55),
-                          topRight: Radius.elliptical(36, 58),
-                          bottomLeft: Radius.elliptical(27, 42),
-                          bottomRight: Radius.elliptical(73, 45),
-                        ),
-                        border: Border.all(
-                            color: Colors.red.withAlpha(130),
-                            width: 2,
-                            style: BorderStyle.none),
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            JumnsColors.smearRed.withAlpha(100),
-                            Colors.transparent,
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Clear Conversation History',
-                              style: GoogleFonts.architectsDaughter(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.red.shade900)),
-                          Icon(Icons.delete_sweep,
-                              color: Colors.red.shade900, size: 20),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // ── Appearance ──
-          Transform.rotate(
-            angle: -0.5 * math.pi / 180,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: charcoalBorderDecoration(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.palette,
-                          color: JumnsColors.charcoal, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Appearance',
-                          style: GoogleFonts.gloriaHallelujah(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: JumnsColors.charcoal)),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _SettingsNavRow(
-                      label: 'Theme',
-                      trailing: 'Charcoal',
-                      onTap: () => _showComingSoon(context, 'Theme')),
-                  const DashedSeparator(height: 1),
-                  _SettingsNavRow(
-                      label: 'Paper Texture',
-                      trailing: 'Cream',
-                      onTap: () => _showComingSoon(context, 'Paper Texture')),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // ── Notifications ──
-          Transform.rotate(
-            angle: 0.8 * math.pi / 180,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: charcoalBorderDecoration(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.notifications_active,
-                          color: JumnsColors.charcoal, size: 20),
-                      const SizedBox(width: 8),
-                      Text('Notifications',
-                          style: GoogleFonts.gloriaHallelujah(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: JumnsColors.charcoal)),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _SettingsNavRow(
-                      label: 'Daily Briefing',
-                      trailing: '8:00 AM',
-                      onTap: () => _showComingSoon(context, 'Daily Briefing')),
-                  const DashedSeparator(height: 1),
-                  _SettingsNavRow(
-                      label: 'Journal Prompt',
-                      trailing: '9:00 PM',
-                      onTap: () => _showComingSoon(context, 'Journal Prompt')),
-                  const DashedSeparator(height: 1),
-                  _SettingsNavRow(
-                      label: 'Reminders',
-                      trailing: 'On',
-                      onTap: () => _showComingSoon(context, 'Reminders')),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // ── Sign Out button (red ink smear) ──
-          GestureDetector(
-            onTap: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('demo_mode', false);
-              ref.read(demoModeProvider.notifier).state = false;
-              ref.read(authNotifierProvider.notifier).signOut();
-              if (context.mounted) context.go('/login');
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: JumnsColors.surface,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.elliptical(64, 55),
-                  topRight: Radius.elliptical(36, 58),
-                  bottomLeft: Radius.elliptical(27, 42),
-                  bottomRight: Radius.elliptical(73, 45),
-                ),
-                border: Border.all(color: JumnsColors.ink, width: 2),
-              ),
-              child: Stack(
-                children: [
-                  // Red ink smear behind
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            JumnsColors.smearRed.withAlpha(130),
-                            Colors.transparent,
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.logout,
-                            color: JumnsColors.charcoal, size: 20),
-                        const SizedBox(width: 8),
-                        Text('Sign Out',
-                            style: GoogleFonts.gloriaHallelujah(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: JumnsColors.charcoal)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // ── Footer ──
-          Center(
-            child: Column(
-              children: [
-                Text('Jumns v2.4 (Build 892)',
-                    style: GoogleFonts.architectsDaughter(
-                        fontSize: 12,
-                        color: JumnsColors.ink.withAlpha(100))),
-                const SizedBox(height: 4),
-                Text('Made with charcoal & pixels',
-                    style: GoogleFonts.architectsDaughter(
-                        fontSize: 10,
-                        color: JumnsColors.ink.withAlpha(80))),
-              ],
-            ),
-          ),
-          const SizedBox(height: 100),
+          const SizedBox(width: 14),
+          Text('Settings',
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: SpatialColors.textPrimary)),
         ],
       ),
     );
   }
 
-  void _showComingSoon(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$feature settings coming soon')),
+  Widget _buildAgentConfig(
+      AsyncValue settingsAsync, BuildContext context, WidgetRef ref) {
+    return _GlassCard(
+      icon: Icons.smart_toy_outlined,
+      title: 'Agent Configuration',
+      child: settingsAsync.when(
+        loading: () => const Center(
+            child: Padding(
+                padding: EdgeInsets.all(20),
+                child: CircularProgressIndicator(
+                    color: SpatialColors.agentGreen, strokeWidth: 2))),
+        error: (_, __) => Text('Could not load settings',
+            style: GoogleFonts.plusJakartaSans(
+                color: SpatialColors.textTertiary)),
+        data: (settings) {
+          final s = settings as dynamic;
+          return Column(children: [
+            _SettingsTile(
+                icon: Icons.auto_awesome,
+                label: 'Model',
+                value: s.modelLabel as String,
+                onTap: () =>
+                    _showModelPicker(context, ref, s.model as String)),
+            const SizedBox(height: 10),
+            Row(children: [
+              Expanded(
+                  child: _SettingsTile(
+                      icon: Icons.badge_outlined,
+                      label: 'Name',
+                      value: s.agentName as String,
+                      onTap: () => _showNameEditor(
+                          context, ref, s.agentName as String))),
+              const SizedBox(width: 10),
+              Expanded(
+                  child: _SettingsTile(
+                      icon: Icons.psychology_outlined,
+                      label: 'Personality',
+                      value: s.personalityLabel as String,
+                      onTap: () => _showPersonalityPicker(
+                          context, ref, s.agentBehavior as String))),
+            ]),
+          ]);
+        },
+      ),
     );
   }
 
-  void _showClearDialog(BuildContext context, WidgetRef ref) {
+  Widget _buildSubscription(bool isPro, BuildContext context) {
+    return _GlassCard(
+      icon: Icons.loyalty_outlined,
+      title: 'Subscription',
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+            color: SpatialColors.surfaceSubtle,
+            borderRadius: BorderRadius.circular(16)),
+        child: Row(children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: isPro
+                  ? SpatialColors.noorGradient
+                  : const LinearGradient(
+                      colors: [Color(0xFFF1F5F9), Color(0xFFE2E8F0)]),
+            ),
+            child: Icon(
+                isPro ? Icons.star_rounded : Icons.star_outline_rounded,
+                color: isPro
+                    ? SpatialColors.textPrimary
+                    : SpatialColors.textTertiary,
+                size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(isPro ? 'Pro Status' : 'Free Plan',
+                      style: GoogleFonts.plusJakartaSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: SpatialColors.textPrimary)),
+                  Text(isPro ? 'Active' : 'Upgrade for more',
+                      style: GoogleFonts.inter(
+                          fontSize: 12, color: SpatialColors.textTertiary)),
+                ]),
+          ),
+          if (isPro)
+            Container(
+              width: 28,
+              height: 28,
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle, color: SpatialColors.checkBg),
+              child: const Icon(Icons.check_rounded,
+                  color: SpatialColors.agentGreen, size: 16),
+            )
+          else
+            GestureDetector(
+              onTap: () => context.push('/paywall'),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                    gradient: SpatialColors.noorGradient,
+                    borderRadius: BorderRadius.circular(9999)),
+                child: Text('Upgrade',
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: SpatialColors.textPrimary)),
+              ),
+            ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildDataPrivacy(BuildContext context, WidgetRef ref) {
+    return _GlassCard(
+      icon: Icons.shield_outlined,
+      title: 'Data & Privacy',
+      child: Column(children: [
+        _SettingsRow(
+            label: 'Privacy Policy',
+            onTap: () => openUrl(context, JemsUrls.privacyPolicy)),
+        Divider(color: SpatialColors.surfaceMuted, height: 1),
+        _SettingsRow(
+            label: 'Clear Conversation History',
+            isDestructive: true,
+            trailing: Icons.delete_sweep_outlined,
+            onTap: () => _showClearDialog(context, ref)),
+      ]),
+    );
+  }
+
+  Widget _buildNotifications(
+      AsyncValue settingsAsync, BuildContext context, WidgetRef ref) {
+    return _GlassCard(
+      icon: Icons.notifications_outlined,
+      title: 'Notifications',
+      child: settingsAsync.when(
+        loading: () => const SizedBox.shrink(),
+        error: (_, __) => const SizedBox.shrink(),
+        data: (settings) {
+          final s = settings as dynamic;
+          return Column(children: [
+            _SettingsRow(
+                label: 'Daily Briefing',
+                value: _formatTime(s.morningTime as String),
+                onTap: () => _showTimePicker(context, ref, 'morningTime',
+                    s.morningTime as String, 'Daily Briefing Time')),
+            Divider(color: SpatialColors.surfaceMuted, height: 1),
+            _SettingsRow(
+                label: 'Journal Prompt',
+                value: _formatTime(s.eveningTime as String),
+                onTap: () => _showTimePicker(context, ref, 'eveningTime',
+                    s.eveningTime as String, 'Journal Prompt Time')),
+          ]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildSignOut(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () async {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('demo_mode', false);
+        ref.read(demoModeProvider.notifier).state = false;
+        ref.read(authNotifierProvider.notifier).signOut();
+        if (context.mounted) context.go('/login');
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+            color: const Color(0xFFFEE2E2),
+            borderRadius: BorderRadius.circular(16)),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Icon(Icons.logout_rounded, color: Colors.red.shade700, size: 20),
+          const SizedBox(width: 8),
+          Text('Sign Out',
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red.shade700)),
+        ]),
+      ),
+    );
+  }
+
+  Widget _buildFooter() {
+    return Center(
+      child: Column(children: [
+        Text('Jems v2.4',
+            style: GoogleFonts.inter(
+                fontSize: 12, color: SpatialColors.textMuted)),
+        const SizedBox(height: 2),
+        Text('Made with care',
+            style: GoogleFonts.inter(
+                fontSize: 10,
+                color: SpatialColors.textMuted.withAlpha(150))),
+      ]),
+    );
+  }
+
+  // ─── Model picker bottom sheet ───
+  void _showModelPicker(BuildContext context, WidgetRef ref, String current) {
+    const models = [
+      ('gemini-2.5-flash', 'Gemini 2.5 Flash', 'Fast & efficient', Icons.flash_on),
+      ('gemini-2.5-pro', 'Gemini 2.5 Pro', 'Most capable', Icons.auto_awesome),
+      ('gemini-2.0-flash', 'Gemini 2.0 Flash', 'Previous gen', Icons.speed),
+    ];
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: SpatialColors.surface,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Choose Model',
+                style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: SpatialColors.textPrimary)),
+            const SizedBox(height: 16),
+            ...models.map((m) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: GestureDetector(
+                    onTap: () {
+                      ref
+                          .read(userSettingsNotifierProvider.notifier)
+                          .update({'model': m.$1});
+                      Navigator.pop(ctx);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: current == m.$1
+                            ? SpatialColors.surfaceSubtle
+                            : SpatialColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                            color: current == m.$1
+                                ? SpatialColors.agentGreen
+                                : SpatialColors.surfaceMuted,
+                            width: 1.5),
+                      ),
+                      child: Row(children: [
+                        Icon(m.$4,
+                            color: SpatialColors.textSecondary, size: 22),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(m.$2,
+                                    style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: SpatialColors.textPrimary)),
+                                Text(m.$3,
+                                    style: GoogleFonts.inter(
+                                        fontSize: 12,
+                                        color: SpatialColors.textTertiary)),
+                              ]),
+                        ),
+                        if (current == m.$1)
+                          const Icon(Icons.check_circle_rounded,
+                              color: SpatialColors.agentGreen, size: 20),
+                      ]),
+                    ),
+                  ),
+                )),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Agent name editor dialog ───
+  void _showNameEditor(BuildContext context, WidgetRef ref, String current) {
+    final controller = TextEditingController(text: current);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Clear History?',
-            style: GoogleFonts.gloriaHallelujah(color: JumnsColors.charcoal)),
-        content: Text(
-          'This will permanently delete all conversation messages.',
-          style: GoogleFonts.patrickHand(color: JumnsColors.ink),
+        backgroundColor: SpatialColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text('Agent Name',
+            style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w700,
+                color: SpatialColors.textPrimary)),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: GoogleFonts.plusJakartaSans(
+              fontSize: 18, color: SpatialColors.textPrimary),
+          decoration: InputDecoration(
+            hintText: 'e.g. Jems, Buddy, Coach...',
+            hintStyle: GoogleFonts.plusJakartaSans(
+                color: SpatialColors.textTertiary),
+            enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: SpatialColors.surfaceMuted)),
+            focusedBorder: const UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: SpatialColors.agentGreen, width: 2)),
+          ),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
-          ElevatedButton(
+              child: Text('Cancel',
+                  style: GoogleFonts.plusJakartaSans(
+                      color: SpatialColors.textTertiary))),
+          TextButton(
+            onPressed: () {
+              final name = controller.text.trim();
+              if (name.isNotEmpty) {
+                ref
+                    .read(userSettingsNotifierProvider.notifier)
+                    .update({'agentName': name});
+              }
+              Navigator.pop(ctx);
+            },
+            child: Text('Save',
+                style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w600,
+                    color: SpatialColors.agentGreen)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─── Personality picker bottom sheet ───
+  void _showPersonalityPicker(
+      BuildContext context, WidgetRef ref, String current) {
+    const personalities = [
+      ('friendly', 'Friendly', '😊', 'Warm, supportive, encouraging'),
+      ('coach', 'Coach', '💪', 'Motivating, goal-oriented, direct'),
+      ('professional', 'Professional', '📋', 'Structured, efficient, formal'),
+      ('zen', 'Zen', '🧘', 'Calm, mindful, reflective'),
+      ('creative', 'Creative', '✨', 'Playful, imaginative, inspiring'),
+    ];
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: SpatialColors.surface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Agent Personality',
+                style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: SpatialColors.textPrimary)),
+            const SizedBox(height: 16),
+            ...personalities.map((p) {
+              final isSelected = current.toLowerCase() == p.$1;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GestureDetector(
+                  onTap: () {
+                    ref
+                        .read(userSettingsNotifierProvider.notifier)
+                        .update({'agentBehavior': p.$1});
+                    Navigator.pop(ctx);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? SpatialColors.surfaceSubtle
+                          : SpatialColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                          color: isSelected
+                              ? SpatialColors.agentViolet
+                              : SpatialColors.surfaceMuted,
+                          width: 1.5),
+                    ),
+                    child: Row(children: [
+                      Text(p.$3, style: const TextStyle(fontSize: 24)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(p.$2,
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: SpatialColors.textPrimary)),
+                              Text(p.$4,
+                                  style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      color: SpatialColors.textTertiary)),
+                            ]),
+                      ),
+                      if (isSelected)
+                        const Icon(Icons.check_circle_rounded,
+                            color: SpatialColors.agentViolet, size: 20),
+                    ]),
+                  ),
+                ),
+              );
+            }),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─── Time picker ───
+  Future<void> _showTimePicker(BuildContext context, WidgetRef ref,
+      String field, String currentValue, String title) async {
+    final parts = currentValue.split(':');
+    final hour = int.tryParse(parts.firstOrNull ?? '8') ?? 8;
+    final minute = int.tryParse(parts.elementAtOrNull(1) ?? '0') ?? 0;
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: hour, minute: minute),
+      helpText: title,
+    );
+    if (picked != null) {
+      final formatted =
+          '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+      ref
+          .read(userSettingsNotifierProvider.notifier)
+          .update({field: formatted});
+    }
+  }
+
+  String _formatTime(String time24) {
+    final parts = time24.split(':');
+    final h = int.tryParse(parts.firstOrNull ?? '0') ?? 0;
+    final m = parts.elementAtOrNull(1) ?? '00';
+    final period = h >= 12 ? 'PM' : 'AM';
+    final h12 = h == 0 ? 12 : (h > 12 ? h - 12 : h);
+    return '$h12:$m $period';
+  }
+
+  // ─── Clear history dialog ───
+  void _showClearDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: SpatialColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text('Clear History?',
+            style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w700,
+                color: SpatialColors.textPrimary)),
+        content: Text(
+            'This will permanently delete all conversation messages.',
+            style: GoogleFonts.plusJakartaSans(
+                color: SpatialColors.textSecondary)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('Cancel',
+                  style: GoogleFonts.plusJakartaSans(
+                      color: SpatialColors.textTertiary))),
+          TextButton(
             onPressed: () {
               ref.read(messagesNotifierProvider.notifier).clearAll();
               Navigator.pop(ctx);
             },
-            style: ElevatedButton.styleFrom(
-                backgroundColor: JumnsColors.error),
-            child: const Text('Clear'),
+            child: Text('Clear',
+                style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red.shade600)),
           ),
         ],
       ),
@@ -627,79 +563,221 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
-// ─── Config tile (2-column grid in Agent Config) ───
 
-class _ConfigTile extends StatelessWidget {
+// ─── Neumorphic circle button (back button) ───
+class _NeumorphicCircleButton extends StatelessWidget {
   final IconData icon;
-  final String label;
-  final String value;
-  const _ConfigTile(
-      {required this.icon, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: JumnsColors.paperDark.withAlpha(80),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-            color: JumnsColors.ink.withAlpha(80),
-            width: 2,
-            style: BorderStyle.none),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: JumnsColors.charcoal, size: 24),
-          const SizedBox(height: 6),
-          Text(label,
-              style: GoogleFonts.architectsDaughter(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: JumnsColors.charcoal)),
-          Text(value,
-              style: GoogleFonts.architectsDaughter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: JumnsColors.ink.withAlpha(130))),
-        ],
-      ),
-    );
-  }
-}
-
-// ─── Settings nav row with chevron ───
-
-class _SettingsNavRow extends StatelessWidget {
-  final String label;
-  final String? trailing;
   final VoidCallback onTap;
-  const _SettingsNavRow(
-      {required this.label, this.trailing, required this.onTap});
+  const _NeumorphicCircleButton({required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: [
-            Text(label,
-                style: GoogleFonts.architectsDaughter(
-                    fontSize: 17,
-                    color: JumnsColors.charcoal)),
-            const Spacer(),
-            if (trailing != null)
-              Text(trailing!,
-                  style: GoogleFonts.architectsDaughter(
-                      fontSize: 14,
-                      color: JumnsColors.ink.withAlpha(130))),
-            const SizedBox(width: 4),
-            Icon(Icons.chevron_right,
-                color: JumnsColors.ink.withAlpha(130), size: 20),
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: SpatialColors.surface,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withAlpha(26),
+                offset: const Offset(-2, -2),
+                blurRadius: 6,
+                blurStyle: BlurStyle.inner),
+            BoxShadow(
+                color: Colors.white.withAlpha(128),
+                offset: const Offset(2, 2),
+                blurRadius: 6,
+                blurStyle: BlurStyle.inner),
+            BoxShadow(
+                color: Colors.black.withAlpha(13),
+                offset: const Offset(0, 1),
+                blurRadius: 3),
           ],
         ),
+        child: Icon(icon, color: SpatialColors.textTertiary, size: 18),
+      ),
+    );
+  }
+}
+
+// ─── Profile section with agent sphere style avatar ───
+class _SpatialProfileSection extends StatelessWidget {
+  final String name;
+  const _SpatialProfileSection({required this.name});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(children: [
+        Container(
+          width: 90,
+          height: 90,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: SpatialColors.noorGradient,
+            boxShadow: [
+              BoxShadow(
+                  offset: const Offset(0, 8),
+                  blurRadius: 24,
+                  color: const Color(0xFF6EE7B7).withAlpha(60)),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              name.isNotEmpty ? name[0].toUpperCase() : 'U',
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                  color: SpatialColors.textPrimary),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(name,
+            style: GoogleFonts.plusJakartaSans(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: SpatialColors.textPrimary)),
+        const SizedBox(height: 2),
+        Text('Making life simpler',
+            style: GoogleFonts.inter(
+                fontSize: 13, color: SpatialColors.textTertiary)),
+      ]),
+    );
+  }
+}
+
+// ─── Glass card container ───
+class _GlassCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Widget child;
+  const _GlassCard(
+      {required this.icon, required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: SpatialColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: SpatialColors.surfaceMuted, width: 1),
+        boxShadow: [
+          BoxShadow(
+              offset: const Offset(0, 1),
+              blurRadius: 2,
+              color: Colors.black.withAlpha(13)),
+        ],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(icon, color: SpatialColors.textTertiary, size: 20),
+          const SizedBox(width: 8),
+          Text(title,
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: SpatialColors.textPrimary)),
+        ]),
+        const SizedBox(height: 16),
+        child,
+      ]),
+    );
+  }
+}
+
+
+// ─── Settings tile (tappable card with icon, label, value) ───
+class _SettingsTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final VoidCallback onTap;
+  const _SettingsTile(
+      {required this.icon,
+      required this.label,
+      required this.value,
+      required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: SpatialColors.surfaceSubtle,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(children: [
+          Icon(icon, color: SpatialColors.textTertiary, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(label,
+                  style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                      color: SpatialColors.textTertiary)),
+              const SizedBox(height: 2),
+              Text(value,
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: SpatialColors.textPrimary),
+                  overflow: TextOverflow.ellipsis),
+            ]),
+          ),
+          Icon(Icons.chevron_right_rounded,
+              color: SpatialColors.textMuted, size: 18),
+        ]),
+      ),
+    );
+  }
+}
+
+// ─── Settings row (simple label + optional value + chevron) ───
+class _SettingsRow extends StatelessWidget {
+  final String label;
+  final String? value;
+  final bool isDestructive;
+  final IconData? trailing;
+  final VoidCallback onTap;
+  const _SettingsRow(
+      {required this.label,
+      this.value,
+      this.isDestructive = false,
+      this.trailing,
+      required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final color =
+        isDestructive ? Colors.red.shade600 : SpatialColors.textSecondary;
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(children: [
+          Text(label,
+              style: GoogleFonts.plusJakartaSans(
+                  fontSize: 15, fontWeight: FontWeight.w500, color: color)),
+          const Spacer(),
+          if (value != null)
+            Text(value!,
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: SpatialColors.textTertiary)),
+          const SizedBox(width: 4),
+          Icon(trailing ?? Icons.chevron_right_rounded,
+              color: isDestructive ? Colors.red.shade400 : SpatialColors.textMuted,
+              size: 18),
+        ]),
       ),
     );
   }

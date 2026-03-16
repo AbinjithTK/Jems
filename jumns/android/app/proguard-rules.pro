@@ -6,5 +6,6 @@
 -keep class io.flutter.** { *; }
 -keep class io.flutter.plugins.** { *; }
 
-# RevenueCat
--keep class com.revenuecat.purchases.** { *; }
+# Google Play Core (required by Flutter deferred components)
+-dontwarn com.google.android.play.core.**
+-keep class com.google.android.play.core.** { *; }

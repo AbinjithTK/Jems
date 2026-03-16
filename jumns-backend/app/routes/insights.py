@@ -1,4 +1,4 @@
-"""Routes for /api/insights — list insights + trigger proactive engine."""
+"""Routes for /api/insights — list, read/dismiss, unread count, trigger engine."""
 
 from fastapi import APIRouter, Request
 
@@ -27,12 +27,33 @@ async def list_insights(request: Request) -> list[InsightResponse]:
     return [_to_response(i) for i in repo.list_all(request.state.user_id)]
 
 
+@router.get("/unread")
+async def unread_count(request: Request) -> dict:
+    """Return count of unread, non-dismissed insights."""
+    repo = InsightsRepository()
+    count = repo.unread_count(request.state.user_id)
+    return {"count": count}
+
+
+@router.post("/{insight_id}/read")
+async def mark_read(request: Request, insight_id: str) -> dict:
+    """Mark a single insight as read."""
+    repo = InsightsRepository()
+    repo.mark_read(request.state.user_id, insight_id)
+    return {"ok": True}
+
+
+@router.post("/{insight_id}/dismiss")
+async def dismiss_insight(request: Request, insight_id: str) -> dict:
+    """Dismiss a single insight (hides it from the list)."""
+    repo = InsightsRepository()
+    repo.dismiss(request.state.user_id, insight_id)
+    return {"ok": True}
+
+
 @router.post("/run")
 async def trigger_proactive(request: Request) -> dict:
-    """Manually trigger the proactive engine for the current user.
-
-    Runs plan_review + smart_suggestions and returns any generated content.
-    """
+    """Manually trigger the proactive engine for the current user."""
     user_id = request.state.user_id
     agent = AgentService()
     results = []

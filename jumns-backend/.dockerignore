@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+.git
+.gitignore
+infra/
+*.md
+.env
+local_server.py
+requirements-dev.txt
+pyproject.toml
+google-services.json
+*.jks
+*.keystore

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/models/chat_message.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 
 class AgentStatusFooter extends StatelessWidget {
   final AgentReadyState state;
@@ -25,7 +25,7 @@ class AgentStatusFooter extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.architectsDaughter(
-              color: JumnsColors.ink,
+              color: JemsColors.ink,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
@@ -86,7 +86,7 @@ class _PulsingDotState extends State<_PulsingDot>
           height: 8,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: JumnsColors.mint.withAlpha(
+            color: JemsColors.mint.withAlpha(
               widget.animate ? (100 + (_controller.value * 155)).toInt() : 255,
             ),
           ),

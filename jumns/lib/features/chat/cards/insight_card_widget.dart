@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 import '../../../core/theme/charcoal_decorations.dart';
 import '../../../core/models/agent_card.dart';
 
@@ -15,10 +15,10 @@ class InsightCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = card.priority == 'high'
-        ? JumnsColors.coral
+        ? JemsColors.coral
         : card.priority == 'medium'
-            ? JumnsColors.amber
-            : JumnsColors.mint;
+            ? JemsColors.amber
+            : JemsColors.mint;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -26,9 +26,9 @@ class InsightCardWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withAlpha(30),
         borderRadius: kCharcoalRadiusAlt,
-        border: Border.all(color: JumnsColors.ink, width: 2),
+        border: Border.all(color: JemsColors.ink, width: 2),
         boxShadow: const [
-          BoxShadow(color: JumnsColors.borderShadow, offset: Offset(2, 2)),
+          BoxShadow(color: JemsColors.borderShadow, offset: Offset(2, 2)),
         ],
       ),
       child: Column(
@@ -44,7 +44,7 @@ class InsightCardWidget extends StatelessWidget {
                   style: GoogleFonts.gloriaHallelujah(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: JumnsColors.charcoal,
+                    color: JemsColors.charcoal,
                   ),
                 ),
               ),
@@ -60,7 +60,7 @@ class InsightCardWidget extends StatelessWidget {
                   style: GoogleFonts.architectsDaughter(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: JumnsColors.charcoal,
+                    color: JemsColors.charcoal,
                   ),
                 ),
               ),
@@ -72,7 +72,7 @@ class InsightCardWidget extends StatelessWidget {
             style: GoogleFonts.architectsDaughter(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: JumnsColors.ink,
+              color: JemsColors.ink,
               height: 1.4,
             ),
           ),
@@ -81,15 +81,15 @@ class InsightCardWidget extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: JumnsColors.surface,
+                color: JemsColors.surface,
                 borderRadius: kCharcoalRadius,
                 border: Border.all(
-                    color: JumnsColors.ink.withAlpha(100), width: 1),
+                    color: JemsColors.ink.withAlpha(100), width: 1),
               ),
               child: Row(
                 children: [
                   Icon(Icons.lightbulb_outline,
-                      size: 16, color: JumnsColors.amber),
+                      size: 16, color: JemsColors.amber),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -97,7 +97,7 @@ class InsightCardWidget extends StatelessWidget {
                       style: GoogleFonts.architectsDaughter(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: JumnsColors.charcoal,
+                        color: JemsColors.charcoal,
                       ),
                     ),
                   ),

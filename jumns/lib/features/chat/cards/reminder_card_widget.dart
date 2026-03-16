@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/models/agent_card.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 import '../../../core/theme/charcoal_decorations.dart';
 
 class ReminderCardWidget extends StatelessWidget {
@@ -20,7 +20,7 @@ class ReminderCardWidget extends StatelessWidget {
     return Transform.rotate(
       angle: 1 * math.pi / 180,
       child: CharcoalCard(
-        blobColor: JumnsColors.amber,
+        blobColor: JemsColors.amber,
         rotation: 0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,11 +28,11 @@ class ReminderCardWidget extends StatelessWidget {
             Row(
               children: [
                 const Icon(Icons.notifications_active,
-                    color: JumnsColors.amber, size: 18),
+                    color: JemsColors.amber, size: 18),
                 const SizedBox(width: 8),
                 Text('UPCOMING REMINDER',
                     style: GoogleFonts.architectsDaughter(
-                        color: JumnsColors.charcoal,
+                        color: JemsColors.charcoal,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1)),
@@ -41,34 +41,38 @@ class ReminderCardWidget extends StatelessWidget {
             const SizedBox(height: 12),
             Text(card.title,
                 style: GoogleFonts.gloriaHallelujah(
-                    color: JumnsColors.charcoal,
+                    color: JemsColors.charcoal,
                     fontSize: 16,
                     fontWeight: FontWeight.w600)),
             const SizedBox(height: 4),
             Row(
               children: [
                 Icon(Icons.access_time,
-                    color: JumnsColors.ink.withAlpha(130), size: 14),
+                    color: JemsColors.ink.withAlpha(130), size: 14),
                 const SizedBox(width: 4),
                 Text(card.time,
                     style: GoogleFonts.architectsDaughter(
-                        color: JumnsColors.ink.withAlpha(150),
+                        color: JemsColors.ink.withAlpha(150),
                         fontSize: 13,
                         fontWeight: FontWeight.w700)),
                 if (card.linkedGoal != null) ...[
                   const SizedBox(width: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: JumnsColors.charcoal,
-                      borderRadius: BorderRadius.circular(8),
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: JemsColors.charcoal,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(card.linkedGoal!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.architectsDaughter(
+                              color: JemsColors.paper,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700)),
                     ),
-                    child: Text(card.linkedGoal!,
-                        style: GoogleFonts.architectsDaughter(
-                            color: JumnsColors.paper,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700)),
                   ),
                 ],
               ],

@@ -1,13 +1,13 @@
-import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/state/app_state.dart';
-import '../../core/theme/jumns_colors.dart';
+import '../../core/theme/spatial_colors.dart';
+import '../../core/widgets/agent_sphere.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -18,10 +18,9 @@ class SplashScreen extends ConsumerStatefulWidget {
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
     with TickerProviderStateMixin {
-  late final AnimationController _logoController;
+  late final AnimationController _sphereController;
   late final AnimationController _fadeController;
-  late final Animation<double> _logoScale;
-  late final Animation<double> _logoRotation;
+  late final Animation<double> _sphereScale;
   late final Animation<double> _titleOpacity;
   late final Animation<double> _subtitleOpacity;
   bool _navigated = false;
@@ -30,16 +29,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   void initState() {
     super.initState();
 
-    _logoController = AnimationController(
+    _sphereController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _logoScale = CurvedAnimation(
-      parent: _logoController,
+    _sphereScale = CurvedAnimation(
+      parent: _sphereController,
       curve: Curves.elasticOut,
-    );
-    _logoRotation = Tween<double>(begin: -12, end: 0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
     );
 
     _fadeController = AnimationController(
@@ -59,54 +55,53 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       ),
     );
 
-    _logoController.forward();
+    // Start animations
+    _sphereController.forward();
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) _fadeController.forward();
     });
 
-    // Start checking auth after minimum splash duration
     _waitAndNavigate();
   }
 
   Future<void> _waitAndNavigate() async {
-    // Show splash for at least 2 seconds
-    await Future.delayed(const Duration(milliseconds: 2000));
+    // Ensure minimum splash duration for animations
+    await Future.delayed(const Duration(milliseconds: 2400));
+    if (!mounted || _navigated) return;
 
-    // Wait for auth to resolve (up to 5 more seconds)
-    for (var i = 0; i < 50; i++) {
-      if (!mounted) return;
-      final status = ref.read(authNotifierProvider).status;
-      if (status != AuthStatus.unknown) break;
-      await Future.delayed(const Duration(milliseconds: 100));
+    // Wait for auth to resolve from unknown → authenticated/unauthenticated
+    // Poll every 100ms, timeout after 10s to avoid infinite hang
+    const maxWait = Duration(seconds: 10);
+    const pollInterval = Duration(milliseconds: 100);
+    var elapsed = Duration.zero;
+
+    while (mounted && !_navigated && elapsed < maxWait) {
+      final authState = ref.read(authNotifierProvider);
+      if (authState.status != AuthStatus.unknown) break;
+      await Future.delayed(pollInterval);
+      elapsed += pollInterval;
     }
 
-    _navigate();
-  }
-
-  void _navigate() {
     if (!mounted || _navigated) return;
     _navigated = true;
 
     final authState = ref.read(authNotifierProvider);
-    final appState = ref.read(appStateProvider);
     final isDemoMode = ref.read(demoModeProvider);
 
     if (isDemoMode) {
-      context.go('/chat');
-      return;
-    }
-
-    if (authState.status == AuthStatus.authenticated) {
-      context.go(appState.hasCompletedOnboarding ? '/chat' : '/welcome');
+      context.go('/hub');
+    } else if (authState.status == AuthStatus.authenticated) {
+      final appState = ref.read(appStateProvider);
+      context.go(appState.hasCompletedOnboarding ? '/hub' : '/welcome');
     } else {
-      // Not authenticated — check if they've seen onboarding before
-      context.go(appState.hasCompletedOnboarding ? '/login' : '/welcome');
+      // If still unknown after timeout, treat as unauthenticated
+      context.go('/login');
     }
   }
 
   @override
   void dispose() {
-    _logoController.dispose();
+    _sphereController.dispose();
     _fadeController.dispose();
     super.dispose();
   }
@@ -114,97 +109,40 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: JumnsColors.paper,
+      backgroundColor: SpatialColors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AnimatedBuilder(
-              animation: _logoController,
-              builder: (context, child) {
-                return Transform.rotate(
-                  angle: _logoRotation.value * math.pi / 180,
-                  child: Transform.scale(
-                    scale: _logoScale.value,
-                    child: child,
-                  ),
-                );
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Transform.rotate(
-                    angle: 8 * math.pi / 180,
-                    child: Container(
-                      width: 140,
-                      height: 140,
-                      decoration: BoxDecoration(
-                        color: JumnsColors.mint.withAlpha(100),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.elliptical(64, 55),
-                          topRight: Radius.elliptical(36, 58),
-                          bottomLeft: Radius.elliptical(27, 42),
-                          bottomRight: Radius.elliptical(73, 45),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 110,
-                    height: 110,
-                    decoration: BoxDecoration(
-                      color: JumnsColors.lavender,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.elliptical(64, 55),
-                        topRight: Radius.elliptical(36, 58),
-                        bottomLeft: Radius.elliptical(27, 42),
-                        bottomRight: Radius.elliptical(73, 45),
-                      ),
-                      border: Border.all(color: JumnsColors.ink, width: 2.5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'J',
-                        style: GoogleFonts.gloriaHallelujah(
-                          color: JumnsColors.charcoal,
-                          fontSize: 52,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            // Animated agent sphere as logo
+            ScaleTransition(
+              scale: _sphereScale,
+              child: const AgentSphere(agentColor: 'green', size: 120, showFace: true),
             ),
             const SizedBox(height: 28),
-            AnimatedBuilder(
-              animation: _titleOpacity,
-              builder: (context, child) => Opacity(
-                opacity: _titleOpacity.value,
-                child: child,
-              ),
+            // Title
+            FadeTransition(
+              opacity: _titleOpacity,
               child: Text(
-                'Jumns',
-                style: GoogleFonts.gloriaHallelujah(
-                  color: JumnsColors.charcoal,
-                  fontSize: 38,
-                  fontWeight: FontWeight.bold,
+                'Jems',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                  color: SpatialColors.textPrimary,
+                  letterSpacing: -0.6,
                 ),
               ),
             ),
             const SizedBox(height: 8),
-            AnimatedBuilder(
-              animation: _subtitleOpacity,
-              builder: (context, child) => Opacity(
-                opacity: _subtitleOpacity.value,
-                child: child,
-              ),
+            // Subtitle
+            FadeTransition(
+              opacity: _subtitleOpacity,
               child: Text(
                 'YOUR AI LIFE ASSISTANT',
-                style: GoogleFonts.architectsDaughter(
-                  color: JumnsColors.ink.withAlpha(150),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: SpatialColors.textTertiary,
                   letterSpacing: 2,
                 ),
               ),

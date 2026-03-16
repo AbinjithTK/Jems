@@ -1,4 +1,8 @@
-"""API Gateway + Lambda construct."""
+"""API Gateway + Lambda construct.
+
+Chat/agent endpoints run on Google Cloud Run (not Lambda).
+This construct only handles CRUD routes + scheduler Lambda.
+"""
 
 from constructs import Construct
 
@@ -12,7 +16,10 @@ from .database import DatabaseConstruct
 
 
 class ApiConstruct(Construct):
-    """Creates API Gateway REST API + CRUD/Chat/Scheduler Lambdas."""
+    """Creates API Gateway REST API + CRUD/Scheduler Lambdas.
+
+    Agent/chat/WebSocket endpoints are served by Cloud Run (separate deploy).
+    """
 
     def __init__(
         self,
@@ -36,6 +43,10 @@ class ApiConstruct(Construct):
             "SKILLS_TABLE": db.skills_table.table_name,
             "INSIGHTS_TABLE": db.insights_table.table_name,
             "ACCESS_CODES_TABLE": db.access_codes_table.table_name,
+            "CONNECTIONS_TABLE": db.connections_table.table_name,
+            "MCP_SERVERS_TABLE": db.mcp_servers_table.table_name,
+            "JOURNAL_TABLE": db.journal_table.table_name,
+            "AGENT_CONTEXT_TABLE": db.agent_context_table.table_name,
             "MEMORY_BUCKET": memory_bucket.bucket_name,
             "SECRETS_ARN": secrets.secret_arn,
             "COGNITO_USER_POOL_ID": "us-east-1_Bn4GrzTdg",
@@ -43,26 +54,18 @@ class ApiConstruct(Construct):
         }
 
         # --- CRUD Lambda (512MB / 30s) ---
+        # Handles all /api/* routes EXCEPT /api/chat and /api/ws/*
         self.crud_fn = _lambda.Function(
             self, "CrudFunction",
             function_name=f"jumns-crud-{stage}",
             runtime=_lambda.Runtime.PYTHON_3_12,
             handler="app.main.handler",
-            code=_lambda.Code.from_asset("../app"),
+            code=_lambda.Code.from_asset(
+                "../app",
+                exclude=["agent/**", "memory/**", "__pycache__/**"],
+            ),
             memory_size=512,
             timeout=cdk.Duration.seconds(30),
-            environment=common_env,
-        )
-
-        # --- Chat Lambda (1024MB / 120s) ---
-        self.chat_fn = _lambda.Function(
-            self, "ChatFunction",
-            function_name=f"jumns-chat-{stage}",
-            runtime=_lambda.Runtime.PYTHON_3_12,
-            handler="app.main.handler",
-            code=_lambda.Code.from_asset("../app"),
-            memory_size=1024,
-            timeout=cdk.Duration.seconds(120),
             environment=common_env,
         )
 
@@ -78,20 +81,17 @@ class ApiConstruct(Construct):
             environment=common_env,
         )
 
-        # Grant DynamoDB access to all Lambdas
+        # Grant DynamoDB access
         for table in db.all_tables:
             table.grant_read_write_data(self.crud_fn)
-            table.grant_read_write_data(self.chat_fn)
             table.grant_read_write_data(self.scheduler_fn)
 
         # Grant S3 memory bucket access
         memory_bucket.grant_read_write(self.crud_fn)
-        memory_bucket.grant_read_write(self.chat_fn)
         memory_bucket.grant_read_write(self.scheduler_fn)
 
         # Grant Secrets Manager read access
         secrets.grant_read(self.crud_fn)
-        secrets.grant_read(self.chat_fn)
         secrets.grant_read(self.scheduler_fn)
 
         # --- API Gateway ---
@@ -105,13 +105,8 @@ class ApiConstruct(Construct):
             ),
         )
 
-        # /api/chat → Chat Lambda
+        # /api/{proxy+} → CRUD Lambda (catch-all for data routes)
         api_resource = self.api.root.add_resource("api")
-        chat_resource = api_resource.add_resource("chat")
-        chat_integration = apigw.LambdaIntegration(self.chat_fn)
-        chat_resource.add_method("POST", chat_integration)
-
-        # /api/{proxy+} → CRUD Lambda (catch-all)
         api_resource.add_proxy(
             default_integration=apigw.LambdaIntegration(self.crud_fn),
             any_method=True,
@@ -127,5 +122,5 @@ class ApiConstruct(Construct):
         cdk.CfnOutput(
             self, "ApiUrl",
             value=self.api.url,
-            description="Jumns API Gateway endpoint URL",
+            description="Jumns API Gateway endpoint URL (CRUD only)",
         )

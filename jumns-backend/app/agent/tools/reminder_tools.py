@@ -4,15 +4,12 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 
-from strands import tool
-
 from app.db.repositories.reminders import RemindersRepository
 
 
 _reminders_repo = RemindersRepository()
 
 
-@tool
 def get_reminders(user_id: str) -> list[dict]:
     """Get all reminders for the user.
 
@@ -38,12 +35,11 @@ def get_reminders(user_id: str) -> list[dict]:
     ]
 
 
-@tool
 def create_reminder(
     user_id: str,
     title: str,
-    time: str = "",
-    goal_id: str | None = None,
+    time: str,
+    goal_id: str,
 ) -> dict:
     """Create a new reminder with a schedule.
 
@@ -56,8 +52,8 @@ def create_reminder(
     Args:
         user_id: The authenticated user's ID.
         title: What to remind about.
-        time: When — e.g. "Today 5:00 PM", "Every morning", "Weekdays 8 AM".
-        goal_id: Link to a goal if relevant.
+        time: When — e.g. "Today 5:00 PM", "Every morning", "Weekdays 8 AM". Use empty string if unspecified.
+        goal_id: Link to a goal if relevant. Use empty string if none.
 
     Returns:
         The created reminder dict.
@@ -74,33 +70,32 @@ def create_reminder(
     }
 
 
-@tool
 def update_reminder(
     user_id: str,
     reminder_id: str,
-    title: str | None = None,
-    time: str | None = None,
-    active: bool | None = None,
+    title: str,
+    time: str,
+    active: str,
 ) -> dict:
     """Update a reminder's title, time, or active status (pause/resume).
 
     Args:
         user_id: The authenticated user's ID.
         reminder_id: The reminder ID to update.
-        title: New title.
-        time: New schedule.
-        active: Set to false to pause, true to resume.
+        title: New title. Use empty string to skip.
+        time: New schedule. Use empty string to skip.
+        active: Set to "false" to pause, "true" to resume. Use empty string to skip.
 
     Returns:
         The updated reminder dict.
     """
     updates: dict = {}
-    if title is not None:
+    if title:
         updates["title"] = title
-    if time is not None:
+    if time:
         updates["time"] = time
-    if active is not None:
-        updates["active"] = active
+    if active:
+        updates["active"] = active.lower() == "true"
 
     try:
         reminder = _reminders_repo.update(user_id, reminder_id, updates)
@@ -114,11 +109,10 @@ def update_reminder(
         return {"error": "Reminder not found"}
 
 
-@tool
 def snooze_reminder(
     user_id: str,
     reminder_id: str,
-    minutes: int = 30,
+    minutes: int,
 ) -> dict:
     """Snooze a reminder by pushing it forward.
 
@@ -130,13 +124,14 @@ def snooze_reminder(
     Args:
         user_id: The authenticated user's ID.
         reminder_id: The reminder to snooze.
-        minutes: How many minutes to push forward (default 30, max 1440).
+        minutes: How many minutes to push forward (use 30 as default, max 1440).
 
     Returns:
         Updated reminder with new time and snooze count.
     """
     try:
-        result = _reminders_repo.snooze(user_id, reminder_id, minutes)
+        actual_minutes = minutes if minutes > 0 else 30
+        result = _reminders_repo.snooze(user_id, reminder_id, actual_minutes)
         snooze_count = result.get("snoozeCount", 0)
         response = {
             "id": result.get("id", result.get("reminderId", "")),
@@ -155,7 +150,6 @@ def snooze_reminder(
         return {"error": "Reminder not found"}
 
 
-@tool
 def delete_reminder(user_id: str, reminder_id: str) -> dict:
     """Delete a reminder permanently.
 

@@ -1,28 +1,32 @@
-"""Boto3 DynamoDB resource — cached across Lambda invocations."""
+"""Google Cloud Firestore client — cached across requests.
+
+Replaces the previous boto3 DynamoDB connection.
+Uses FIRESTORE_EMULATOR_HOST env var for local development,
+otherwise connects to the project's Firestore instance.
+"""
 
 from __future__ import annotations
 
 import os
 
-import boto3
-from botocore.config import Config
+from google.cloud import firestore
 
-_resource = None
-
-
-def get_dynamodb_resource():
-    """Return a cached boto3 DynamoDB resource."""
-    global _resource
-    if _resource is None:
-        endpoint = os.getenv("DYNAMODB_ENDPOINT")  # for local/moto testing
-        config = Config(retries={"max_attempts": 3, "mode": "adaptive"})
-        kwargs: dict = {"config": config}
-        if endpoint:
-            kwargs["endpoint_url"] = endpoint
-        _resource = boto3.resource("dynamodb", **kwargs)
-    return _resource
+_client: firestore.Client | None = None
 
 
-def get_table(table_name: str):
-    """Return a DynamoDB Table object."""
-    return get_dynamodb_resource().Table(table_name)
+def get_firestore_client() -> firestore.Client:
+    """Return a cached Firestore client.
+
+    If FIRESTORE_EMULATOR_HOST is set, connects to the local emulator.
+    Otherwise uses Application Default Credentials (ADC).
+    """
+    global _client
+    if _client is None:
+        project = os.getenv("GCP_PROJECT", os.getenv("GOOGLE_CLOUD_PROJECT", "jems-dd018"))
+        _client = firestore.Client(project=project)
+    return _client
+
+
+def get_collection(collection_name: str) -> firestore.CollectionReference:
+    """Return a Firestore collection reference."""
+    return get_firestore_client().collection(collection_name)

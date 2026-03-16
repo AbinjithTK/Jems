@@ -19,8 +19,36 @@ class MessageResponse(CamelModel):
     content: str | None = None
     card_type: str | None = None
     card_data: dict | None = None
+    agent: str | None = None
     timestamp: str
     created_at: str | None = None
+
+
+class AgentChatResponse(CamelModel):
+    """Enhanced chat response with agent identity and navigation."""
+    id: str
+    user_id: str
+    role: str
+    type: str
+    content: str | None = None
+    card_type: str | None = None
+    card_data: dict | None = None
+    agent: str = "noor"
+    delegated_to: str | None = None
+    navigation: dict | None = None
+    timestamp: str
+    created_at: str | None = None
+
+
+class AgentInfoResponse(CamelModel):
+    """Agent metadata for the /agents endpoint."""
+    name: str
+    display_name: str
+    description: str
+    role: str
+    tab: str
+    accent: str
+    icon: str
 
 
 class GoalResponse(CamelModel):
@@ -88,6 +116,7 @@ class UserSettingsResponse(CamelModel):
     timezone: str = "UTC"
     morning_time: str = "07:00"
     evening_time: str = "21:00"
+    model: str = "gemini-2.5-flash"
 
 
 class SubscriptionStatusResponse(CamelModel):
@@ -114,9 +143,39 @@ class MemoryResponse(CamelModel):
     id: str
     user_id: str
     content: str
+    category: str = "fact"
+    importance: str = "medium"
+    score: float | None = None
     metadata: dict | None = None
     created_at: str | None = None
 
 
 class ErrorResponse(BaseModel):
     error: str
+
+
+class JournalEntryResponse(CamelModel):
+    id: str
+    user_id: str
+    type: str = "thought"
+    title: str = ""
+    content: str = ""
+    mood: str | None = None
+    tags: list[str] = []
+    shareable: bool = False
+    draft: bool = True
+    agent_prompted: bool = False
+    linked_goal_id: str | None = None
+    media_url: str | None = None
+    created_at: str | None = None
+
+
+class FriendMessageResponse(CamelModel):
+    id: str
+    user_id: str
+    connection_id: str
+    friend_user_id: str
+    sender_user_id: str
+    content: str = ""
+    type: str = "text"
+    created_at: str | None = None

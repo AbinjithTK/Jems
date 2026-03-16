@@ -4,8 +4,7 @@ import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/navigation/router.dart';
 import 'core/services/auth_service.dart';
-import 'core/services/revenuecat_service.dart';
-import 'core/theme/jumns_theme.dart';
+import 'core/theme/spatial_theme.dart';
 
 void main() async {
   enableFlutterDriverExtension();
@@ -19,31 +18,26 @@ void main() async {
   ));
 
   final authService = AuthService();
-  final rc = RevenueCatService();
-  final restoredUser = await authService.restoreSession();
-  try {
-    await rc.init(userId: restoredUser?.sub);
-  } catch (_) {}
+  await authService.restoreSession();
 
   runApp(ProviderScope(
     overrides: [
       authServiceProvider.overrideWithValue(authService),
-      revenueCatServiceProvider.overrideWithValue(rc),
     ],
-    child: const JumnsApp(),
+    child: const JemsApp(),
   ));
 }
 
-class JumnsApp extends ConsumerWidget {
-  const JumnsApp({super.key});
+class JemsApp extends ConsumerWidget {
+  const JemsApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
-      title: 'Jumns',
+      title: 'Jems',
       debugShowCheckedModeBanner: false,
-      theme: jumnsTheme(),
+      theme: spatialTheme(),
       routerConfig: router,
     );
   }

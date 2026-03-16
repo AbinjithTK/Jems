@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from strands import tool
-
 from app.db.repositories.goals import GoalsRepository
 from app.db.repositories.tasks import TasksRepository
 from app.db.repositories.reminders import RemindersRepository
@@ -21,23 +19,23 @@ _reminders_repo = RemindersRepository()
 _skills_repo = SkillsRepository()
 
 
-@tool
-def query_user_data(user_id: str, data_type: str = "all") -> dict:
+def query_user_data(user_id: str, data_type: str) -> dict:
     """Query the user's stored data across all entity types.
 
     Args:
         user_id: The authenticated user's ID.
         data_type: Which data to fetch — "goals", "tasks", "reminders",
-                   "skills", or "all" for everything.
+                   "skills", or "all" for everything. Use "all" as default.
 
     Returns:
         Dict with requested data keyed by type.
     """
+    actual_type = data_type if data_type else "all"
     result: dict = {}
     types = (
         ["goals", "tasks", "reminders", "skills"]
-        if data_type == "all"
-        else [data_type]
+        if actual_type == "all"
+        else [actual_type]
     )
 
     if "goals" in types:
@@ -52,7 +50,6 @@ def query_user_data(user_id: str, data_type: str = "all") -> dict:
     return result
 
 
-@tool
 def search_data(user_id: str, query: str) -> dict:
     """Search across goals, tasks, and reminders by keyword.
 
@@ -91,12 +88,11 @@ def search_data(user_id: str, query: str) -> dict:
     }
 
 
-@tool
-def get_current_datetime(timezone_str: str = "UTC") -> str:
+def get_current_datetime(timezone_str: str) -> str:
     """Return the current date and time as a human-readable string.
 
     Args:
-        timezone_str: IANA timezone name (currently only UTC supported).
+        timezone_str: IANA timezone name (currently only UTC supported). Use "UTC" as default.
 
     Returns:
         Formatted datetime string.

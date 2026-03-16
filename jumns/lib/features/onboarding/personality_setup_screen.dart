@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +7,8 @@ import '../../core/providers/auth_provider.dart';
 import '../../core/services/api_client.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/state/app_state.dart';
-import '../../core/theme/jumns_colors.dart';
-import '../../core/theme/charcoal_decorations.dart';
+import '../../core/theme/spatial_colors.dart';
+import '../../core/widgets/agent_sphere.dart';
 
 /// Personality onboarding — 3 steps:
 ///   1. Name your agent
@@ -28,7 +28,7 @@ class _PersonalitySetupScreenState
   int _currentPage = 0;
 
   // Step 1: Agent name
-  final _nameController = TextEditingController(text: 'Jumns');
+  final _nameController = TextEditingController(text: 'Jems');
 
   // Step 2: Personality
   String _selectedPersonality = 'friendly';
@@ -36,41 +36,16 @@ class _PersonalitySetupScreenState
   bool _saving = false;
 
   static const _personalities = [
-    (
-      key: 'friendly',
-      emoji: '😊',
-      label: 'Friendly',
-      desc: 'Warm, encouraging, celebrates your wins',
-      color: JumnsColors.mint,
-    ),
-    (
-      key: 'coach',
-      emoji: '💪',
-      label: 'Coach',
-      desc: 'Motivating, pushes you to do better',
-      color: JumnsColors.coral,
-    ),
-    (
-      key: 'professional',
-      emoji: '📋',
-      label: 'Professional',
-      desc: 'Clear, structured, no fluff',
-      color: JumnsColors.markerBlue,
-    ),
-    (
-      key: 'zen',
-      emoji: '🧘',
-      label: 'Zen',
-      desc: 'Calm, mindful, reflective',
-      color: JumnsColors.lavender,
-    ),
-    (
-      key: 'creative',
-      emoji: '✨',
-      label: 'Creative',
-      desc: 'Playful, quirky, makes tasks fun',
-      color: JumnsColors.amber,
-    ),
+    (key: 'friendly', emoji: '😊', label: 'Friendly',
+     desc: 'Warm, encouraging, celebrates your wins', color: 'green'),
+    (key: 'coach', emoji: '💪', label: 'Coach',
+     desc: 'Motivating, pushes you to do better', color: 'pink'),
+    (key: 'professional', emoji: '📋', label: 'Professional',
+     desc: 'Clear, structured, no fluff', color: 'violet'),
+    (key: 'zen', emoji: '🧘', label: 'Zen',
+     desc: 'Calm, mindful, reflective', color: 'yellow'),
+    (key: 'creative', emoji: '✨', label: 'Creative',
+     desc: 'Playful, quirky, makes tasks fun', color: 'green'),
   ];
 
   @override
@@ -104,20 +79,19 @@ class _PersonalitySetupScreenState
       final api = ref.read(apiClientProvider);
       await api.post('/api/user-settings', body: {
         'agentName': _nameController.text.trim().isEmpty
-            ? 'Jumns'
+            ? 'Jems'
             : _nameController.text.trim(),
         'agentBehavior': _selectedPersonality,
         'onboardingCompleted': true,
       });
     } catch (_) {
-      // Local server might not be running — that's fine, proceed anyway
+      // Local server might not be running — proceed anyway
     }
     if (!mounted) return;
     ref.read(appStateProvider.notifier).completeOnboarding();
-    // Check if user is already authenticated
     final authState = ref.read(authNotifierProvider);
     if (authState.status == AuthStatus.authenticated) {
-      context.go('/chat');
+      context.go('/hub');
     } else {
       context.go('/login');
     }
@@ -126,7 +100,7 @@ class _PersonalitySetupScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: JumnsColors.paper,
+      backgroundColor: SpatialColors.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -146,15 +120,11 @@ class _PersonalitySetupScreenState
                       height: 10,
                       decoration: BoxDecoration(
                         color: isActive
-                            ? JumnsColors.charcoal
+                            ? SpatialColors.agentGreen
                             : isDone
-                                ? JumnsColors.mint
-                                : JumnsColors.ink.withAlpha(60),
+                                ? SpatialColors.agentGreen.withAlpha(100)
+                                : SpatialColors.surfaceMuted,
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                          color: JumnsColors.ink.withAlpha(100),
-                          width: 1.5,
-                        ),
                       ),
                     ),
                   );
@@ -214,81 +184,61 @@ class _NamePage extends StatelessWidget {
       child: Column(
         children: [
           const Spacer(flex: 2),
-          // Big blob with pencil icon
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Transform.rotate(
-                angle: 8 * math.pi / 180,
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: JumnsColors.lavender.withAlpha(120),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.elliptical(64, 55),
-                      topRight: Radius.elliptical(36, 58),
-                      bottomLeft: Radius.elliptical(27, 42),
-                      bottomRight: Radius.elliptical(73, 45),
-                    ),
-                  ),
-                ),
-              ),
-              BlobShape(
-                color: JumnsColors.mint.withAlpha(180),
-                size: 80,
-                child: const Icon(Icons.edit, color: JumnsColors.charcoal, size: 36),
-              ),
-            ],
-          ),
+          const AgentSphere(agentColor: 'green', size: 100, showFace: true),
           const SizedBox(height: 24),
           Text(
             'Name your assistant',
-            style: GoogleFonts.gloriaHallelujah(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: JumnsColors.charcoal,
+              fontWeight: FontWeight.w700,
+              color: SpatialColors.textPrimary,
+              letterSpacing: -0.6,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Give it a name that feels right to you',
-            style: GoogleFonts.architectsDaughter(
+            style: GoogleFonts.inter(
               fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: JumnsColors.ink.withAlpha(150),
+              color: SpatialColors.textTertiary,
             ),
           ),
           const SizedBox(height: 32),
-          Container(
-            decoration: charcoalBorderDecoration(),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: TextField(
-              controller: controller,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.gloriaHallelujah(
-                fontSize: 28,
-                color: JumnsColors.charcoal,
-              ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Jumns',
-                hintStyle: GoogleFonts.gloriaHallelujah(
-                  fontSize: 28,
-                  color: JumnsColors.ink.withAlpha(80),
+          // Glass text field
+          ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: SpatialColors.inputGlassBg,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: SpatialColors.glassBorder),
+                ),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 4),
+                child: TextField(
+                  controller: controller,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
+                    color: SpatialColors.textPrimary,
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Jems',
+                    hintStyle: GoogleFonts.plusJakartaSans(
+                      fontSize: 28,
+                      color: SpatialColors.textMuted,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
           const Spacer(flex: 3),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: onNext,
-              child: const Text('Next', style: TextStyle(fontSize: 17)),
-            ),
-          ),
+          _GreenPillButton(label: 'Next', onPressed: onNext),
           const SizedBox(height: 32),
         ],
       ),
@@ -306,7 +256,7 @@ class _PersonalityPage extends StatelessWidget {
         String emoji,
         String label,
         String desc,
-        Color color,
+        String color,
       })> personalities;
   final ValueChanged<String> onSelect;
   final VoidCallback onNext;
@@ -329,19 +279,19 @@ class _PersonalityPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Pick a vibe',
-            style: GoogleFonts.gloriaHallelujah(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: JumnsColors.charcoal,
+              fontWeight: FontWeight.w700,
+              color: SpatialColors.textPrimary,
+              letterSpacing: -0.6,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'How should your assistant talk to you?',
-            style: GoogleFonts.architectsDaughter(
+            style: GoogleFonts.inter(
               fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: JumnsColors.ink.withAlpha(150),
+              color: SpatialColors.textTertiary,
             ),
           ),
           const SizedBox(height: 20),
@@ -359,57 +309,69 @@ class _PersonalityPage extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? p.color.withAlpha(60)
-                          : JumnsColors.surface,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.elliptical(34, 49),
-                        topRight: Radius.elliptical(66, 62),
-                        bottomLeft: Radius.elliptical(70, 38),
-                        bottomRight: Radius.elliptical(30, 51),
-                      ),
+                          ? SpatialColors.agentColor(p.color).withAlpha(25)
+                          : SpatialColors.surface,
+                      borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: isSelected
-                            ? JumnsColors.charcoal
-                            : JumnsColors.ink.withAlpha(80),
-                        width: isSelected ? 2.5 : 1.5,
+                            ? SpatialColors.agentColor(p.color)
+                            : SpatialColors.surfaceMuted,
+                        width: isSelected ? 2 : 1,
                       ),
+                      boxShadow: isSelected
+                          ? [BoxShadow(
+                              color: SpatialColors.agentColor(p.color)
+                                  .withAlpha(30),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            )]
+                          : [const BoxShadow(
+                              color: Color(0x0D000000),
+                              blurRadius: 2,
+                              offset: Offset(0, 1),
+                            )],
                     ),
                     child: Row(
                       children: [
-                        BlobShape(
-                          color: p.color.withAlpha(isSelected ? 200 : 120),
-                          size: 48,
-                          variant: i % 4,
-                          child: Text(p.emoji,
-                              style: const TextStyle(fontSize: 24)),
-                        ),
+                        AgentSphere(
+                            agentColor: p.color,
+                            size: 48,
+                            showFace: false),
                         const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                p.label,
-                                style: GoogleFonts.gloriaHallelujah(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: JumnsColors.charcoal,
-                                ),
+                              Row(
+                                children: [
+                                  Text(p.emoji,
+                                      style: const TextStyle(fontSize: 18)),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    p.label,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: SpatialColors.textPrimary,
+                                    ),
+                                  ),
+                                ],
                               ),
+                              const SizedBox(height: 2),
                               Text(
                                 p.desc,
-                                style: GoogleFonts.architectsDaughter(
+                                style: GoogleFonts.inter(
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: JumnsColors.ink.withAlpha(150),
+                                  color: SpatialColors.textTertiary,
                                 ),
                               ),
                             ],
                           ),
                         ),
                         if (isSelected)
-                          const Icon(Icons.check_circle,
-                              color: JumnsColors.charcoal, size: 24),
+                          Icon(Icons.check_circle,
+                              color: SpatialColors.agentColor(p.color),
+                              size: 24),
                       ],
                     ),
                   ),
@@ -423,17 +385,14 @@ class _PersonalityPage extends StatelessWidget {
               TextButton(
                 onPressed: onBack,
                 child: Text('Back',
-                    style: GoogleFonts.architectsDaughter(
-                        color: JumnsColors.ink, fontWeight: FontWeight.w700)),
+                    style: GoogleFonts.inter(
+                        color: SpatialColors.textTertiary,
+                        fontWeight: FontWeight.w500)),
               ),
               const Spacer(),
               SizedBox(
                 width: 160,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: onNext,
-                  child: const Text('Next', style: TextStyle(fontSize: 16)),
-                ),
+                child: _GreenPillButton(label: 'Next', onPressed: onNext),
               ),
             ],
           ),
@@ -455,7 +414,7 @@ class _ConfirmPage extends StatelessWidget {
         String emoji,
         String label,
         String desc,
-        Color color,
+        String color,
       })> personalities;
   final bool saving;
   final VoidCallback onFinish;
@@ -474,63 +433,40 @@ class _ConfirmPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = personalities.firstWhere((x) => x.key == personality,
         orElse: () => personalities.first);
-    final displayName = name.trim().isEmpty ? 'Jumns' : name.trim();
+    final displayName = name.trim().isEmpty ? 'Jems' : name.trim();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
         children: [
           const Spacer(flex: 2),
-          // Big avatar blob
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Transform.rotate(
-                angle: -6 * math.pi / 180,
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: p.color.withAlpha(100),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.elliptical(64, 55),
-                      topRight: Radius.elliptical(36, 58),
-                      bottomLeft: Radius.elliptical(27, 42),
-                      bottomRight: Radius.elliptical(73, 45),
-                    ),
-                  ),
-                ),
-              ),
-              BlobShape(
-                color: p.color.withAlpha(200),
-                size: 90,
-                child: Text(p.emoji, style: const TextStyle(fontSize: 44)),
-              ),
-            ],
-          ),
+          AgentSphere(agentColor: p.color, size: 110, showFace: true),
           const SizedBox(height: 20),
           Text(
             'Meet $displayName',
-            style: GoogleFonts.gloriaHallelujah(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: JumnsColors.charcoal,
+              fontWeight: FontWeight.w700,
+              color: SpatialColors.textPrimary,
+              letterSpacing: -0.6,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          // Personality badge pill
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: p.color.withAlpha(80),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: JumnsColors.ink.withAlpha(80)),
+              color: SpatialColors.agentColor(p.color).withAlpha(25),
+              borderRadius: BorderRadius.circular(9999),
+              border: Border.all(
+                  color: SpatialColors.agentColor(p.color).withAlpha(60)),
             ),
             child: Text(
               '${p.emoji} ${p.label}',
-              style: GoogleFonts.architectsDaughter(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: JumnsColors.charcoal,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: SpatialColors.textSecondary,
               ),
             ),
           ),
@@ -538,54 +474,112 @@ class _ConfirmPage extends StatelessWidget {
           Text(
             p.desc,
             textAlign: TextAlign.center,
-            style: GoogleFonts.architectsDaughter(
+            style: GoogleFonts.inter(
               fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: JumnsColors.ink.withAlpha(180),
+              color: SpatialColors.textTertiary,
             ),
           ),
           const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: charcoalBorderDecoration(),
-            child: Text(
-              '"You can always change my personality later in Settings."',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.patrickHand(
-                fontSize: 14,
-                color: JumnsColors.ink.withAlpha(150),
-                fontStyle: FontStyle.italic,
+          // Glass note
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: SpatialColors.inputGlassBg,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: SpatialColors.glassBorder),
+                ),
+                child: Text(
+                  'You can always change the personality later in Settings.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: SpatialColors.textTertiary,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
               ),
             ),
           ),
           const Spacer(flex: 3),
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: saving ? null : onFinish,
-              child: saving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: JumnsColors.paper,
-                      ),
-                    )
-                  : Text("Let's go!",
-                      style: const TextStyle(fontSize: 17)),
-            ),
+          _GreenPillButton(
+            label: "Let's go!",
+            loading: saving,
+            onPressed: onFinish,
           ),
           const SizedBox(height: 12),
           TextButton(
             onPressed: onBack,
             child: Text('Go back',
-                style: GoogleFonts.architectsDaughter(
-                    color: JumnsColors.ink, fontWeight: FontWeight.w700)),
+                style: GoogleFonts.inter(
+                    color: SpatialColors.textTertiary,
+                    fontWeight: FontWeight.w500)),
           ),
           const SizedBox(height: 24),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Shared green gradient pill button ───
+
+class _GreenPillButton extends StatelessWidget {
+  final String label;
+  final bool loading;
+  final VoidCallback onPressed;
+
+  const _GreenPillButton({
+    required this.label,
+    this.loading = false,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 52,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: SpatialColors.noorGradient,
+          borderRadius: BorderRadius.circular(9999),
+          boxShadow: [
+            BoxShadow(
+              color: SpatialColors.agentGreen.withAlpha(51),
+              offset: const Offset(0, 4),
+              blurRadius: 12,
+            ),
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: loading ? null : onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(9999),
+            ),
+          ),
+          child: loading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: SpatialColors.textPrimary,
+                  ),
+                )
+              : Text(label,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: SpatialColors.textPrimary,
+                  )),
+        ),
       ),
     );
   }

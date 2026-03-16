@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/jumns_colors.dart';
+import '../../../core/theme/jems_colors.dart';
 
 /// Charcoal Sketch header: blob-shaped avatar with lavender arc + handwritten title.
 class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -27,7 +27,7 @@ class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
           color: Colors.transparent,
           border: Border(
             bottom: BorderSide(
-              color: JumnsColors.ink,
+              color: JemsColors.ink,
               width: 2,
               style: BorderStyle.solid,
             ),
@@ -57,8 +57,8 @@ class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: JumnsColors.surface,
-                        border: Border.all(color: JumnsColors.ink, width: 2),
+                        color: JemsColors.surface,
+                        border: Border.all(color: JemsColors.ink, width: 2),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.elliptical(40, 50),
                           topRight: Radius.elliptical(60, 40),
@@ -70,7 +70,7 @@ class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
                         child: Text(
                           'J',
                           style: GoogleFonts.gloriaHallelujah(
-                            color: JumnsColors.charcoal,
+                            color: JemsColors.charcoal,
                             fontWeight: FontWeight.w700,
                             fontSize: 20,
                           ),
@@ -93,7 +93,7 @@ class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
                     child: Text(
                       agentName,
                       style: GoogleFonts.gloriaHallelujah(
-                        color: JumnsColors.charcoal,
+                        color: JemsColors.charcoal,
                         fontWeight: FontWeight.w700,
                         fontSize: 22,
                       ),
@@ -108,10 +108,10 @@ class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: JumnsColors.mint,
+                            color: JemsColors.mint,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: JumnsColors.ink,
+                              color: JemsColors.ink,
                               width: 1,
                             ),
                           ),
@@ -120,7 +120,7 @@ class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
                         Text(
                           status,
                           style: GoogleFonts.architectsDaughter(
-                            color: JumnsColors.ink.withAlpha(150),
+                            color: JemsColors.ink.withAlpha(150),
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
@@ -143,12 +143,12 @@ class AgentHeader extends StatelessWidget implements PreferredSizeWidget {
                   bottomLeft: Radius.elliptical(27, 42),
                   bottomRight: Radius.elliptical(73, 45),
                 ),
-                border: Border.all(color: JumnsColors.ink, width: 2),
+                border: Border.all(color: JemsColors.ink, width: 2),
               ),
               child: const Center(
                 child: Icon(
                   Icons.more_horiz_rounded,
-                  color: JumnsColors.charcoal,
+                  color: JemsColors.charcoal,
                   size: 18,
                 ),
               ),
@@ -164,11 +164,11 @@ class _LavenderArcPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = JumnsColors.lavender.withAlpha(130)
+      ..color = JemsColors.lavender.withAlpha(130)
       ..style = PaintingStyle.fill;
 
     final strokePaint = Paint()
-      ..color = JumnsColors.ink
+      ..color = JemsColors.ink
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 

@@ -6,7 +6,7 @@ import '../../core/models/skill.dart';
 import '../../core/models/cron_job.dart';
 import '../../core/providers/skills_provider.dart';
 import '../../core/providers/cron_provider.dart';
-import '../../core/theme/jumns_colors.dart';
+import '../../core/theme/jems_colors.dart';
 import '../../core/theme/charcoal_decorations.dart';
 
 class ToolkitScreen extends ConsumerWidget {
@@ -26,11 +26,11 @@ class ToolkitScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.cloud_off, size: 48,
-                    color: JumnsColors.ink),
+                    color: JemsColors.ink),
                 const SizedBox(height: 12),
                 Text('Could not load toolkit',
                     style: GoogleFonts.architectsDaughter(
-                        color: JumnsColors.ink, fontWeight: FontWeight.w700)),
+                        color: JemsColors.ink, fontWeight: FontWeight.w700)),
                 TextButton(
                   onPressed: () =>
                       ref.read(skillsNotifierProvider.notifier).load(),
@@ -70,7 +70,7 @@ class _ToolkitContent extends ConsumerWidget {
                 style: GoogleFonts.gloriaHallelujah(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: JumnsColors.charcoal)),
+                    color: JemsColors.charcoal)),
           ),
         ),
         const DashedSeparator(),
@@ -98,7 +98,7 @@ class _ToolkitContent extends ConsumerWidget {
               ? Center(
                   child: Text('No agents connected',
                       style: GoogleFonts.architectsDaughter(
-                          color: JumnsColors.ink.withAlpha(130),
+                          color: JemsColors.ink.withAlpha(130),
                           fontSize: 16,
                           fontWeight: FontWeight.w700)),
                 )
@@ -131,7 +131,7 @@ class _ToolkitContent extends ConsumerWidget {
             child: Center(
               child: Text('No MCP servers configured',
                   style: GoogleFonts.architectsDaughter(
-                      color: JumnsColors.ink.withAlpha(130),
+                      color: JemsColors.ink.withAlpha(130),
                       fontSize: 16,
                       fontWeight: FontWeight.w700)),
             ),
@@ -160,7 +160,7 @@ class _ToolkitContent extends ConsumerWidget {
             child: Center(
               child: Text('Could not load jobs',
                   style: GoogleFonts.architectsDaughter(
-                      color: JumnsColors.ink.withAlpha(130),
+                      color: JemsColors.ink.withAlpha(130),
                       fontSize: 16,
                       fontWeight: FontWeight.w700)),
             ),
@@ -171,17 +171,17 @@ class _ToolkitContent extends ConsumerWidget {
                   child: Column(
                     children: [
                       Icon(Icons.schedule, size: 36,
-                          color: JumnsColors.ink.withAlpha(100)),
+                          color: JemsColors.ink.withAlpha(100)),
                       const SizedBox(height: 8),
                       Text('No scheduled jobs yet',
                           style: GoogleFonts.architectsDaughter(
-                              color: JumnsColors.ink.withAlpha(130),
+                              color: JemsColors.ink.withAlpha(130),
                               fontSize: 16,
                               fontWeight: FontWeight.w700)),
                       const SizedBox(height: 4),
-                      Text('Ask Jumns in chat to set up automations',
+                      Text('Ask Jems in chat to set up automations',
                           style: GoogleFonts.patrickHand(
-                              color: JumnsColors.ink.withAlpha(100),
+                              color: JemsColors.ink.withAlpha(100),
                               fontSize: 13)),
                     ],
                   ),
@@ -213,9 +213,9 @@ class _SkillBlobGrid extends StatelessWidget {
   const _SkillBlobGrid({required this.skills});
 
   static const _blobColors = [
-    JumnsColors.markerBlue,
-    JumnsColors.mint,
-    JumnsColors.lavender,
+    JemsColors.markerBlue,
+    JemsColors.mint,
+    JemsColors.lavender,
   ];
   static const _icons = [
     Icons.translate,
@@ -305,19 +305,21 @@ class _SkillBlobTile extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white.withAlpha(100),
               borderRadius: blobRadius,
-              border: Border.all(color: JumnsColors.ink, width: 2),
+              border: Border.all(color: JemsColors.ink, width: 2),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, size: 32, color: JumnsColors.charcoal),
+                Icon(icon, size: 32, color: JemsColors.charcoal),
                 const SizedBox(height: 8),
                 Text(skill.name,
                     style: GoogleFonts.architectsDaughter(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: JumnsColors.charcoal),
-                    textAlign: TextAlign.center),
+                        color: JemsColors.charcoal),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis),
               ],
             ),
           ),
@@ -339,8 +341,8 @@ class _AddSkillBlob extends StatelessWidget {
           bottomRight: Radius.elliptical(30, 51),
         ),
         border: Border.all(
-            color: JumnsColors.ink, width: 2, style: BorderStyle.none),
-        color: JumnsColors.paperDark.withAlpha(80),
+            color: JemsColors.ink, width: 2, style: BorderStyle.none),
+        color: JemsColors.paperDark.withAlpha(80),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -351,7 +353,7 @@ class _AddSkillBlob extends StatelessWidget {
             bottomRight: Radius.elliptical(30, 51),
           ),
           border: Border.all(
-              color: JumnsColors.ink, width: 2, style: BorderStyle.none),
+              color: JemsColors.ink, width: 2, style: BorderStyle.none),
         ),
         child: CustomPaint(
           painter: _DashedBorderPainter(),
@@ -359,13 +361,13 @@ class _AddSkillBlob extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.add, size: 32,
-                  color: JumnsColors.ink.withAlpha(150)),
+                  color: JemsColors.ink.withAlpha(150)),
               const SizedBox(height: 4),
               Text('Add Skill',
                   style: GoogleFonts.architectsDaughter(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: JumnsColors.ink.withAlpha(150))),
+                      color: JemsColors.ink.withAlpha(150))),
             ],
           ),
         ),
@@ -378,7 +380,7 @@ class _DashedBorderPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = JumnsColors.ink
+      ..color = JemsColors.ink
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
@@ -411,10 +413,10 @@ class _AgentBlob extends StatelessWidget {
   const _AgentBlob({required this.skill, required this.index});
 
   static const _colors = [
-    JumnsColors.coral,
-    JumnsColors.markerBlue,
-    JumnsColors.mint,
-    JumnsColors.lavender,
+    JemsColors.coral,
+    JemsColors.markerBlue,
+    JemsColors.mint,
+    JemsColors.lavender,
   ];
   static const _icons = [
     Icons.face_3,
@@ -458,10 +460,10 @@ class _AgentBlob extends StatelessWidget {
                   borderRadius: BlobShape(
                           color: color, child: const SizedBox())
                       ._radiusForVariant(variant),
-                  border: Border.all(color: JumnsColors.ink, width: 2),
+                  border: Border.all(color: JemsColors.ink, width: 2),
                 ),
                 child: Center(
-                  child: Icon(icon, size: 40, color: JumnsColors.charcoal),
+                  child: Icon(icon, size: 40, color: JemsColors.charcoal),
                 ),
               ),
             ],
@@ -471,12 +473,14 @@ class _AgentBlob extends StatelessWidget {
               style: GoogleFonts.architectsDaughter(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: JumnsColors.charcoal),
-              textAlign: TextAlign.center),
+                  color: JemsColors.charcoal),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis),
           Text(skill.description,
               style: GoogleFonts.patrickHand(
                   fontSize: 12,
-                  color: JumnsColors.ink.withAlpha(150)),
+                  color: JemsColors.ink.withAlpha(150)),
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis),
@@ -504,14 +508,14 @@ class _AddAgentBlob extends StatelessWidget {
                 bottomRight: Radius.elliptical(30, 51),
               ),
               border: Border.all(
-                  color: JumnsColors.ink,
+                  color: JemsColors.ink,
                   width: 2,
                   style: BorderStyle.none),
-              color: JumnsColors.paperDark.withAlpha(80),
+              color: JemsColors.paperDark.withAlpha(80),
             ),
             child: Center(
               child: Icon(Icons.add, size: 32,
-                  color: JumnsColors.ink.withAlpha(130)),
+                  color: JemsColors.ink.withAlpha(130)),
             ),
           ),
           const SizedBox(height: 8),
@@ -519,7 +523,7 @@ class _AddAgentBlob extends StatelessWidget {
               style: GoogleFonts.architectsDaughter(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: JumnsColors.ink.withAlpha(150))),
+                  color: JemsColors.ink.withAlpha(150))),
         ],
       ),
     );
@@ -547,21 +551,21 @@ class _McpServerCard extends StatelessWidget {
         decoration: isConnected
             ? charcoalBorderDecoration()
             : BoxDecoration(
-                color: JumnsColors.paperDark.withAlpha(50),
+                color: JemsColors.paperDark.withAlpha(50),
                 borderRadius: kCharcoalRadius,
                 border: Border.all(
-                    color: JumnsColors.ink,
+                    color: JemsColors.ink,
                     width: 2,
                     style: BorderStyle.none),
               ),
         child: Row(
           children: [
             BlobShape(
-              color: JumnsColors.paper,
+              color: JemsColors.paper,
               size: 48,
               variant: index % 4,
               child: Icon(_icons[index % _icons.length],
-                  color: JumnsColors.charcoal, size: 22),
+                  color: JemsColors.charcoal, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -569,10 +573,12 @@ class _McpServerCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(skill.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.architectsDaughter(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: JumnsColors.charcoal)),
+                          color: JemsColors.charcoal)),
                   const SizedBox(height: 4),
                   Row(
                     children: [
@@ -582,10 +588,10 @@ class _McpServerCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: isConnected
-                              ? JumnsColors.success
-                              : JumnsColors.amber,
+                              ? JemsColors.success
+                              : JemsColors.amber,
                           border: Border.all(
-                              color: JumnsColors.ink, width: 1),
+                              color: JemsColors.ink, width: 1),
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -593,7 +599,7 @@ class _McpServerCard extends StatelessWidget {
                         skill.status,
                         style: GoogleFonts.patrickHand(
                             fontSize: 12,
-                            color: JumnsColors.ink.withAlpha(130)),
+                            color: JemsColors.ink.withAlpha(130)),
                       ),
                     ],
                   ),
@@ -601,7 +607,7 @@ class _McpServerCard extends StatelessWidget {
               ),
             ),
             Icon(Icons.settings,
-                color: JumnsColors.ink.withAlpha(130), size: 20),
+                color: JemsColors.ink.withAlpha(130), size: 20),
           ],
         ),
       ),
@@ -624,10 +630,10 @@ class _CronJobCard extends ConsumerWidget {
 
   static const _icons = [Icons.alarm, Icons.repeat, Icons.event, Icons.timer];
   static const _colors = [
-    JumnsColors.mint,
-    JumnsColors.markerBlue,
-    JumnsColors.lavender,
-    JumnsColors.amber,
+    JemsColors.mint,
+    JemsColors.markerBlue,
+    JemsColors.lavender,
+    JemsColors.amber,
   ];
 
   @override
@@ -648,7 +654,7 @@ class _CronJobCard extends ConsumerWidget {
               variant: index % 4,
               child: Icon(
                 _icons[index % _icons.length],
-                color: JumnsColors.charcoal,
+                color: JemsColors.charcoal,
                 size: 20,
               ),
             ),
@@ -659,12 +665,14 @@ class _CronJobCard extends ConsumerWidget {
                 children: [
                   Text(
                     job.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.architectsDaughter(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: job.enabled
-                          ? JumnsColors.charcoal
-                          : JumnsColors.ink.withAlpha(100),
+                          ? JemsColors.charcoal
+                          : JemsColors.ink.withAlpha(100),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -672,7 +680,7 @@ class _CronJobCard extends ConsumerWidget {
                     job.scheduleDisplay,
                     style: GoogleFonts.patrickHand(
                       fontSize: 12,
-                      color: JumnsColors.ink.withAlpha(130),
+                      color: JemsColors.ink.withAlpha(130),
                     ),
                   ),
                   if (job.runCount > 0)
@@ -680,7 +688,7 @@ class _CronJobCard extends ConsumerWidget {
                       'Ran ${job.runCount}x',
                       style: GoogleFonts.patrickHand(
                         fontSize: 11,
-                        color: JumnsColors.ink.withAlpha(100),
+                        color: JemsColors.ink.withAlpha(100),
                       ),
                     ),
                 ],
@@ -692,8 +700,8 @@ class _CronJobCard extends ConsumerWidget {
               onChanged: (val) {
                 ref.read(cronNotifierProvider.notifier).toggle(job.id, val);
               },
-              activeColor: JumnsColors.mint,
-              inactiveThumbColor: JumnsColors.ink.withAlpha(80),
+              activeColor: JemsColors.mint,
+              inactiveThumbColor: JemsColors.ink.withAlpha(80),
             ),
             // Run now button
             GestureDetector(
@@ -706,7 +714,7 @@ class _CronJobCard extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(4),
                 child: Icon(Icons.play_arrow,
-                    color: JumnsColors.ink.withAlpha(150), size: 20),
+                    color: JemsColors.ink.withAlpha(150), size: 20),
               ),
             ),
           ],
@@ -727,10 +735,10 @@ class _ToolkitStoreCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: JumnsColors.paperDark.withAlpha(80),
+            color: JemsColors.paperDark.withAlpha(80),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-                color: JumnsColors.ink,
+                color: JemsColors.ink,
                 width: 2,
                 style: BorderStyle.none),
           ),
@@ -745,14 +753,14 @@ class _ToolkitStoreCard extends StatelessWidget {
                       style: GoogleFonts.gloriaHallelujah(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: JumnsColors.charcoal)),
+                          color: JemsColors.charcoal)),
                   const SizedBox(height: 8),
                   Text(
                     'Discover new AI capabilities and integrations sketched by the community.',
                     style: GoogleFonts.architectsDaughter(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: JumnsColors.ink.withAlpha(200)),
+                        color: JemsColors.ink.withAlpha(200)),
                   ),
                   const SizedBox(height: 16),
                   SizedBox(
@@ -775,7 +783,7 @@ class _ToolkitStoreCard extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: JumnsColors.lavender.withAlpha(100),
+              color: JemsColors.lavender.withAlpha(100),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.elliptical(64, 55),
                 topRight: Radius.elliptical(36, 58),

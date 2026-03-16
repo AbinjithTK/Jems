@@ -93,7 +93,34 @@ class UserSettingsRequest(BaseModel):
     timezone: str | None = None
     morning_time: str | None = Field(None, alias="morningTime")
     evening_time: str | None = Field(None, alias="eveningTime")
+    model: str | None = None
 
 
 class ActivateCodeRequest(BaseModel):
     code: str = Field(..., min_length=1)
+
+
+class CreateJournalEntryRequest(BaseModel):
+    content: str = Field(..., min_length=1)
+    type: str = "thought"  # thought, reflection, polaroid, audio, sticky
+    title: str = ""
+    mood: str | None = None
+    tags: list[str] = []
+    shareable: bool = False
+    linked_goal_id: str | None = Field(None, alias="linkedGoalId")
+
+
+class UpdateJournalEntryRequest(BaseModel):
+    content: str | None = None
+    title: str | None = None
+    mood: str | None = None
+    tags: list[str] | None = None
+    shareable: bool | None = None
+    draft: bool | None = None
+
+
+class CreateFriendMessageRequest(BaseModel):
+    connection_id: str = Field(..., alias="connectionId")
+    friend_user_id: str = Field(..., alias="friendUserId")
+    content: str = Field(..., min_length=1)
+    type: str = "text"
